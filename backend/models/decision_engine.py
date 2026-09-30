@@ -1,47 +1,6 @@
-"""
-Charter vs Spot Decision Engine
-================================
-Determines whether to lock in a charter contract or continue with
-repeated spot fixtures, using NPV analysis and Monte Carlo simulation.
-
-Decision Framework:
-1. NPV Comparison:
-   - Charter NPV = sum of discounted charter payments over contract period
-   - Spot NPV = sum of discounted expected spot payments using forecasted rates
-   - If Charter NPV < Spot NPV -> recommend CHARTER
-
-2. Breakeven Analysis:
-   - Find the charter rate at which NPV(charter) = NPV(spot)
-   - If offered charter rate < breakeven -> CHARTER is favorable
-
-3. Monte Carlo Simulation:
-   - Simulate 1000 rate paths using forecasted distribution
-   - Calculate probability that charter outperforms spot
-   - Compute VaR (Value at Risk) at 95% confidence
-
-Mathematical Formulation:
-    NPV = sum_{t=1}^{T} CF_t / (1 + r)^t
-    
-    where:
-        CF_t = cash flow at period t
-        r = discount rate per period
-        T = contract duration in periods
-    
-    VaR_95 = percentile(losses, 5)
-    
-    Breakeven rate: solve for R such that
-        sum_{t=1}^{T} R*Q / (1+r)^t = sum_{t=1}^{T} E[S_t]*Q / (1+r)^t
-        => R = sum(E[S_t]/(1+r)^t) / sum(1/(1+r)^t)
-
-References:
-- Alizadeh & Nomikos (2009), "Shipping Derivatives and Risk Management"
-- Hull (2018), "Options, Futures, and Other Derivatives"
-"""
-
 import numpy as np
 import json
-import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from .forecasting import get_forecast
 
 

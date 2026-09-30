@@ -76,6 +76,16 @@ Enter cargo details → Click "Run Full Analysis" → View results across all ta
 
 > **Note:** First analysis takes 30-60 seconds as ML models train on startup. Subsequent analyses are instant.
 
+### Run with Docker
+
+With Docker Desktop running, start the app from the project root:
+
+```bash
+docker compose up --build
+```
+
+Open http://localhost:5173. The API is also available at http://localhost:8001. Stop the containers with `Ctrl+C`, or run `docker compose down` in another terminal.
+
 ## 📊 Tech Stack
 
 | Layer | Technology |

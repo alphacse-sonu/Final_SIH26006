@@ -1,22 +1,7 @@
-"""
-Vessel Type Optimization
-========================
-Selects a feasible bulk-carrier class from Handysize, Supramax,
-Panamax and Capesize using:
-- cargo material and parcel size
-- origin + destination port draft/LOA/beam constraints
-- vessel cargo capacity
-- port cargo-handling capability
-- expected waiting/turnaround exposure
-
-The port figures in this student prototype are synthetic/demo planning inputs.
-They are not live nautical operating limits.
-"""
-
 import json
 import os
 import math
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 
 def _load_json(filename: str):
@@ -31,13 +16,6 @@ def _find(items, key, value):
         if str(item.get(key, "")).lower() == value:
             return item
     return None
-
-
-def get_route(route_code: str) -> Dict:
-    route = _find(_load_json("routes.json"), "route_code", route_code)
-    if not route:
-        raise ValueError(f"Route not found: {route_code}")
-    return route
 
 
 def _estimate_loaded_draft(vessel: Dict, cargo_tonnes: float) -> float:

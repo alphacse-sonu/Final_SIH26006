@@ -1,36 +1,10 @@
-"""
-Freight Rate Forecasting Module
-================================
-Ensemble model combining XGBoost, LightGBM, and LSTM for freight rate prediction
-with confidence intervals.
-
-Architecture:
-1. XGBoost with quantile regression -> point estimate + confidence bounds
-2. LightGBM as second ensemble member -> point estimate
-3. LSTM (PyTorch) for sequential pattern refinement -> residual correction
-4. Final: weighted ensemble + LSTM residual adjustment
-
-Confidence Intervals:
-- 80% CI: XGBoost quantile regression (alpha=0.10, 0.90)
-- 95% CI: XGBoost quantile regression (alpha=0.025, 0.975)
-- Intervals are dynamically widened for longer forecast horizons using
-  sqrt(horizon) scaling (random walk uncertainty growth)
-
-References:
-- Friedman (2001), "Greedy Function Approximation: A Gradient Boosting Machine"
-- Ke et al. (2017), "LightGBM: A Highly Efficient Gradient Boosting Decision Tree"
-- Hochreiter & Schmidhuber (1997), "Long Short-Term Memory"
-"""
-
 import numpy as np
 import pandas as pd
 import os
-import json
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Tuple
 
 import xgboost as xgb
 import lightgbm as lgb
-from sklearn.model_selection import TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 

@@ -1,37 +1,6 @@
-"""
-Total Delivered Cost Calculator
-================================
-Calculates the full expected delivered cost for a voyage, going beyond
-the simple freight rate to include all cost components.
-
-Cost Components:
-1. Freight Cost = rate x cargo quantity
-2. Port Charges = loading port charges + discharge port charges
-3. Waiting Time Cost = expected waiting days x daily vessel cost
-4. Demurrage = max(0, actual_days - allowed_laytime) x demurrage_rate
-5. Lightering Cost (if draft restricted) = from lightering module
-6. Weather Disruption Cost = P(delay) x daily_cost x E[delay_days]
-7. Canal Transit Fees (Suez/Panama if applicable)
-8. Insurance = cargo_value x insurance_rate
-9. Bunker Cost = fuel_consumption x voyage_days x bunker_price
-
-Formula:
-    TotalCost = Freight + PortCharges + WaitingCost + Demurrage
-              + LighteringCost + DisruptionCost + CanalFees
-              + Insurance + BunkerCost
-
-    CostPerTonne = TotalCost / cargo_quantity
-
-References:
-- Stopford (2009), "Maritime Economics", 3rd Edition
-- UNCTAD Review of Maritime Transport
-"""
-
 import json
 import os
-import numpy as np
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
+from typing import Dict, Optional
 
 
 # ============================================================

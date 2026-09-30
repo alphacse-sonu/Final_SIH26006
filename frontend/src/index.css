@@ -63,10 +63,6 @@ body {
 .glow-green {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
 }
-.glow-red {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
-}
-
 /* Loading animation */
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.4; }

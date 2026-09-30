@@ -1,33 +1,4 @@
-"""
-Lightering Optimization Module
-===============================
-Handles cases where a vessel's draft exceeds port depth limits.
-Calculates optimal lightering quantities using TPC (Tonnes Per Centimetre
-Immersion) curves and compares direct berthing vs. lightering costs.
-
-Key Concepts:
-- TPC (Tonnes Per Centimetre): The weight required to change a vessel's
-  draft by 1 cm. Varies with draft due to hull shape.
-- Lightering: Ship-to-ship (STS) cargo transfer at anchorage to reduce
-  draft before entering a draft-restricted port.
-
-Mathematical Formulation:
-    cargo_to_lighter = integral from port_draft to vessel_draft of TPC(d) dd
-    
-    Approximated as:
-    cargo_to_lighter = sum over each cm from port_draft to vessel_draft of TPC(d)
-    
-    In practice, using linear interpolation of TPC curve:
-    cargo_to_lighter ≈ (vessel_draft - port_draft) * 100 * avg_TPC
-    where avg_TPC is the average TPC over the draft range
-
-References:
-- Rawson & Tupper (2001), "Basic Ship Theory", 5th Edition
-- IMO Guidelines for Ship-to-Ship Transfer Operations
-"""
-
-import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import Dict
 import json
 import os
 

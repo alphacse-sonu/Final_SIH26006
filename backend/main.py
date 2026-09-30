@@ -1,29 +1,7 @@
-"""
-Maritime Chartering Decision Platform - API Server
-====================================================
-FastAPI backend serving the ML models and decision engine.
-
-Endpoints:
-    POST /api/predict-rates      - Freight rate forecasting
-    POST /api/calculate-cost     - Total delivered cost calculation
-    POST /api/lightering-analysis - Lightering optimization
-    POST /api/charter-decision   - Charter vs spot decision
-    POST /api/full-analysis      - Combined analysis (all modules)
-    GET  /api/routes             - Available shipping routes
-    GET  /api/vessels            - Available vessel classes
-    GET  /api/ports              - Available ports
-    GET  /api/health             - Health check
-
-Usage:
-    cd backend
-    python data/generate_synthetic_data.py  # Generate training data first
-    uvicorn main:app --reload --port 8000
-"""
-
 import json
 import os
 import traceback
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException

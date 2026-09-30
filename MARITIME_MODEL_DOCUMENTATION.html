@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Maritime Chartering Decision Platform — Complete Technical Documentation</title>
+<style>
+  @page { size: A4; margin: 15mm 14mm 16mm 14mm; }
+
+  :root{
+    --navy:#0b1a2b; --navy2:#132a44; --ocean:#0ea5e9; --ocean-d:#0369a1;
+    --green:#10b981; --amber:#f59e0b; --red:#ef4444; --violet:#8b5cf6;
+    --ink:#1a2432; --ink2:#41556e; --ink3:#6b7f96;
+    --line:#d3dde8; --line2:#e8eef5; --bg:#f4f8fc; --bg2:#eaf2f9;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:"Inter","Helvetica Neue",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--ink); font-size:9.4pt; line-height:1.52; -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{ height:247mm; display:flex; flex-direction:column; justify-content:space-between;
+          background:linear-gradient(160deg,#071322 0%,#0b2036 45%,#0e3350 100%); color:#fff;
+          padding:22mm 16mm; margin:-15mm -14mm 0; page-break-after:always; position:relative; overflow:hidden;}
+  .cover::after{ content:""; position:absolute; right:-70mm; bottom:-70mm; width:200mm; height:200mm;
+          border-radius:50%; background:radial-gradient(circle,rgba(14,165,233,.30),rgba(14,165,233,0) 68%);}
+  .cover::before{ content:""; position:absolute; left:-60mm; top:-60mm; width:150mm; height:150mm;
+          border-radius:50%; background:radial-gradient(circle,rgba(16,185,129,.16),rgba(16,185,129,0) 70%);}
+  .cover-top{ position:relative; z-index:2; }
+  .badge{ display:inline-block; border:1.4px solid rgba(56,189,248,.65); color:#7dd3fc;
+          padding:5px 13px; border-radius:100px; font-size:8pt; letter-spacing:.16em; text-transform:uppercase; font-weight:600;}
+  .cover h1{ font-size:31pt; line-height:1.14; margin:13mm 0 5mm; font-weight:800; letter-spacing:-.022em; }
+  .cover h1 em{ font-style:normal; color:#38bdf8; }
+  .cover .sub{ font-size:12pt; color:#c3d6e8; font-weight:400; line-height:1.45; max-width:150mm; }
+  .rule{ height:3px; width:38mm; background:var(--ocean); margin:9mm 0 7mm; border-radius:2px;}
+  .cover-meta{ position:relative; z-index:2; border-top:1px solid rgba(255,255,255,.17); padding-top:7mm;
+               display:grid; grid-template-columns:repeat(4,1fr); gap:5mm; }
+  .cover-meta div span{ display:block; font-size:7.2pt; letter-spacing:.13em; text-transform:uppercase; color:#7f9cb8; margin-bottom:2.5px;}
+  .cover-meta div b{ font-size:9.6pt; font-weight:650; color:#eaf3fb; }
+  .stat-row{ position:relative; z-index:2; display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; margin-bottom:9mm;}
+  .stat{ background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13); border-radius:9px; padding:5mm 4mm; }
+  .stat b{ display:block; font-size:19pt; font-weight:800; color:#38bdf8; line-height:1.1;}
+  .stat span{ display:block; font-size:7.4pt; color:#a8c3da; margin-top:2px; line-height:1.35;}
+
+  /* ---------- TOC ---------- */
+  .toc{ page-break-after:always; }
+  .toc ol{ list-style:none; padding:0; margin:0; columns:2; column-gap:11mm; }
+  .toc li{ break-inside:avoid; padding:2.6mm 0 2.6mm 0; border-bottom:.6px dotted var(--line);
+           font-size:9pt; display:flex; align-items:baseline; gap:3mm; }
+  .toc li .n{ color:var(--ocean-d); font-weight:700; min-width:9mm; font-size:8.4pt; }
+  .toc li b{ font-weight:600; }
+  .toc li i{ font-style:normal; color:var(--ink3); font-size:7.6pt; display:block; }
+
+  /* ---------- HEADINGS ---------- */
+  h2.sec{ font-size:15pt; color:var(--navy); font-weight:750; letter-spacing:-.015em; margin:0 0 1.5mm;
+          padding-bottom:2.4mm; border-bottom:2.4px solid var(--ocean); break-after:avoid; }
+  h2.sec .num{ color:var(--ocean); }
+  h2.sec + .lede{ color:var(--ink2); font-size:9.2pt; margin:0 0 5mm; font-style:italic; }
+  h3{ font-size:10.6pt; color:var(--navy2); font-weight:700; margin:6.5mm 0 2.2mm; break-after:avoid;
+      padding-left:3mm; border-left:3.2px solid var(--ocean); }
+  h4{ font-size:9.4pt; color:var(--ink); font-weight:700; margin:4.5mm 0 1.5mm; break-after:avoid;}
+  p{ margin:0 0 2.6mm; text-align:justify; }
+  ul,ol{ margin:0 0 3mm; padding-left:5.2mm; }
+  li{ margin-bottom:1.3mm; }
+  .sec{ page-break-before:always; }
+  .nobreak{ break-inside:avoid; }
+
+  /* ---------- TABLES ---------- */
+  table{ width:100%; border-collapse:collapse; margin:2.5mm 0 4mm; font-size:8.1pt; break-inside:avoid; }
+  thead{ display:table-header-group; }
+  th{ background:var(--navy); color:#fff; text-align:left; padding:2.1mm 2.4mm; font-weight:600;
+      font-size:7.5pt; letter-spacing:.035em; text-transform:uppercase; border:none; }
+  th.r,td.r{ text-align:right; } th.c,td.c{ text-align:center; }
+  td{ padding:1.75mm 2.4mm; border-bottom:.6px solid var(--line2); vertical-align:top; }
+  tbody tr:nth-child(even){ background:#f7fafd; }
+  tbody tr:hover{ background:var(--bg2); }
+  table.tight td,table.tight th{ padding:1.35mm 2mm; font-size:7.6pt; }
+  td code,th code{ font-size:7.4pt; }
+  .tbl-note{ font-size:7.4pt; color:var(--ink3); margin:-2.5mm 0 4mm; font-style:italic; }
+
+  /* ---------- CODE ---------- */
+  code{ font-family:"SF Mono",Menlo,Consolas,monospace; background:var(--bg); padding:.4mm 1.1mm;
+        border-radius:2.5px; font-size:8.1pt; color:#0e4f7a; }
+  pre{ background:#0d1c2e; color:#d6e6f5; padding:4mm 4.5mm; border-radius:7px; overflow:hidden;
+       font-size:7.5pt; line-height:1.48; margin:2.5mm 0 4mm; break-inside:avoid;
+       font-family:"SF Mono",Menlo,Consolas,monospace; }
+  pre .c{ color:#6f8ba6; font-style:italic; }
+  pre .k{ color:#7dd3fc; } pre .s{ color:#86efac; } pre .f{ color:#fbbf24; } pre .n{ color:#f0abfc; }
+  .path{ font-family:"SF Mono",Menlo,monospace; font-size:7.9pt; color:#0e4f7a; font-weight:600;}
+
+  /* ---------- MATH ---------- */
+  .eq{ background:var(--bg); border:.7px solid var(--line); border-left:3.2px solid var(--violet);
+       border-radius:0 6px 6px 0; padding:3mm 4mm; margin:2.5mm 0 3.5mm; font-family:"Cambria","Georgia",serif;
+       font-size:9.4pt; line-height:1.75; break-inside:avoid; }
+  .eq .lbl{ float:right; font-family:Inter,sans-serif; font-size:7.2pt; color:var(--ink3);
+            background:#fff; padding:.3mm 1.8mm; border-radius:8px; border:.6px solid var(--line); letter-spacing:.04em;}
+  .eq i{ font-style:italic; } .eq b{ font-weight:700; }
+  .eq sub, .eq sup{ font-size:7.2pt; }
+  .eqvar{ display:grid; grid-template-columns:repeat(auto-fit,minmax(46mm,1fr)); gap:1mm 5mm; margin:2mm 0 3mm;
+          font-family:Inter,sans-serif; font-size:8.2pt; }
+  .eqvar div{ padding:.7mm 0; border-bottom:.5px dotted var(--line); }
+  .eqvar b{ color:var(--navy2); }
+
+  /* ---------- CALLOUTS ---------- */
+  .box{ border-radius:7px; padding:3.4mm 4.2mm; margin:3mm 0 4mm; break-inside:avoid; font-size:8.6pt; }
+  .box .bt{ font-weight:750; font-size:8.2pt; letter-spacing:.06em; text-transform:uppercase; margin-bottom:1.6mm; display:block;}
+  .box p:last-child{ margin-bottom:0; }
+  .warn{ background:#fff8ec; border:.8px solid #fcd9a0; border-left:3.6px solid var(--amber); }
+  .warn .bt{ color:#b45309; }
+  .crit{ background:#fef2f2; border:.8px solid #f8c4c4; border-left:3.6px solid var(--red); }
+  .crit .bt{ color:#b91c1c; }
+  .ok{ background:#f0fdf7; border:.8px solid #b4e8d0; border-left:3.6px solid var(--green); }
+  .ok .bt{ color:#047857; }
+  .info{ background:#f0f8ff; border:.8px solid #bcdcf5; border-left:3.6px solid var(--ocean); }
+  .info .bt{ color:#0369a1; }
+
+  /* ---------- CARDS / GRID ---------- */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:3.4mm; margin:2.5mm 0 4mm;}
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:3.2mm; margin:2.5mm 0 4mm;}
+  .grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin:2.5mm 0 4mm;}
+  .card{ border:.8px solid var(--line); border-radius:7px; padding:3.2mm 3.6mm; background:#fff; break-inside:avoid; }
+  .card .ch{ font-weight:750; font-size:8.8pt; color:var(--navy2); margin-bottom:1.8mm; display:flex; align-items:center; gap:2mm;}
+  .card .cn{ width:5.4mm; height:5.4mm; border-radius:5px; background:var(--ocean); color:#fff;
+             font-size:7.4pt; font-weight:800; display:flex; align-items:center; justify-content:center; flex:0 0 auto;}
+  .card p{ font-size:8.2pt; margin-bottom:1.4mm; } .card p:last-child{ margin-bottom:0; }
+  .kpi{ text-align:center; background:#fff; border:.8px solid var(--line); border-radius:7px; padding:3.4mm 2mm; }
+  .kpi b{ display:block; font-size:15pt; font-weight:800; color:var(--ocean-d); line-height:1.05;}
+  .kpi span{ display:block; font-size:7pt; color:var(--ink3); margin-top:1.4mm; line-height:1.3; text-transform:uppercase; letter-spacing:.05em;}
+  .kpi.g b{ color:#059669; } .kpi.a b{ color:#d97706; } .kpi.r b{ color:#dc2626; } .kpi.v b{ color:#7c3aed;}
+
+  /* ---------- ARCH DIAGRAM ---------- */
+  .arch{ background:#fbfdff; border:.8px solid var(--line); border-radius:8px; padding:4mm; margin:3mm 0 4mm; break-inside:avoid;}
+  .tier{ border-radius:6px; padding:3mm 3.4mm; margin-bottom:2.6mm; }
+  .tier .th2{ font-size:7.4pt; font-weight:750; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2.2mm; }
+  .tier.fe{ background:#e8f4fd; border:.8px solid #bcdcf5; } .tier.fe .th2{ color:#0369a1; }
+  .tier.be{ background:#eef7f1; border:.8px solid #bfe3ce; } .tier.be .th2{ color:#047857; }
+  .tier.dt{ background:#fdf6ec; border:.8px solid #f0d5ac; } .tier.dt .th2{ color:#b45309; }
+  .row{ display:flex; gap:2.4mm; }
+  .row4{ display:grid; grid-template-columns:repeat(4,1fr); gap:2.2mm; }
+  .node{ flex:1; min-width:0; background:#fff; border:.8px solid rgba(0,0,0,.10); border-radius:5px;
+         padding:2.2mm 2.6mm; font-size:7.6pt; text-align:center; line-height:1.3; }
+  .node b{ display:block; font-size:7.9pt; font-weight:700; color:var(--navy2); margin-bottom:.6mm;
+           overflow-wrap:anywhere; hyphens:auto; }
+  .node small{ color:var(--ink3); font-size:6.8pt; display:block;}
+  .flow{ text-align:center; font-size:7.4pt; color:var(--ocean-d); font-weight:700; letter-spacing:.09em; margin:1.6mm 0;}
+
+  /* ---------- MISC ---------- */
+  .kv{ display:grid; grid-template-columns:34mm 1fr; gap:1mm 3mm; font-size:8.3pt; margin:2mm 0 3.5mm;}
+  .kv b{ color:var(--navy2); } .kv span{ color:var(--ink2); }
+  .pill{ display:inline-block; padding:.5mm 2mm; border-radius:9px; font-size:7pt; font-weight:700;
+         letter-spacing:.04em; text-transform:uppercase;}
+  .p-g{ background:#d9f7e8; color:#047857; } .p-r{ background:#fde2e2; color:#b91c1c; }
+  .p-a{ background:#fdf0d5; color:#b45309; } .p-b{ background:#ddeefb; color:#0369a1; }
+  .p-v{ background:#ece4fd; color:#6d28d9; } .p-n{ background:#e8eef5; color:#41556e; }
+  .bar{ height:3.2mm; background:var(--bg2); border-radius:2mm; overflow:hidden; min-width:22mm; display:block;}
+  .bar i{ display:block; height:100%; background:var(--ocean); }
+  .bar.g i{ background:var(--green); } .bar.v i{ background:var(--violet); }
+  .bar.a i{ background:var(--amber); } .bar.r i{ background:var(--red); }
+  .cap{ font-size:7.3pt; color:var(--ink3); font-style:italic; margin:-1.5mm 0 3.5mm; }
+  .foot{ margin-top:8mm; padding-top:3mm; border-top:1px solid var(--line); font-size:7.4pt; color:var(--ink3); }
+  .toc-h{ font-size:19pt; font-weight:800; color:var(--navy); margin:0 0 1.5mm; letter-spacing:-.02em;}
+  .toc-s{ color:var(--ink2); font-size:9.4pt; margin:0 0 7mm; }
+  .hr{ height:1px; background:var(--line2); margin:5mm 0; border:0;}
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<div class="cover">
+  <div class="cover-top">
+    <span class="badge">Smart India Hackathon 2026 &nbsp;·&nbsp; Problem Statement SIH26006</span>
+    <h1>Maritime Chartering<br/><em>Decision Platform</em></h1>
+    <div class="rule"></div>
+    <p class="sub">Complete technical documentation — the data layer, the five analytical modules,
+    the mathematics behind every number, the API surface, the frontend, and a candid
+    assessment of what the system does and does not yet prove.</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat"><b>6</b><span>Analytical modules wired into one recommendation</span></div>
+    <div class="stat"><b>35</b><span>Modelled origin → East Coast trade lanes</span></div>
+    <div class="stat"><b>52</b><span>Engineered features per route</span></div>
+    <div class="stat"><b>1,000</b><span>Monte Carlo rate paths per decision</span></div>
+  </div>
+
+  <div class="cover-meta">
+    <div><span>Submitted by</span><b>Team IIT ISM Dhanbad</b></div>
+    <div><span>Client</span><b>SAIL — Steel Authority of India Ltd.</b></div>
+    <div><span>Stack</span><b>FastAPI · XGBoost · LightGBM · LSTM</b></div>
+    <div><span>Document</span><b>v1.0 — Full System Reference</b></div>
+  </div>
+</div>
+
+<!-- ================= TOC ================= -->
+<div class="toc">
+  <h1 class="toc-h">Table of Contents</h1>
+  <p class="toc-s">Fifteen sections. Sections 1–3 are readable by anyone. Sections 4–11 contain the full mathematics
+  and are the reference for reviewers. Section 14 is the honest limitations register and should be read before any deployment decision.</p>
+  <ol>
+    <li><span class="n">1</span><div><b>Executive Summary</b><i>What the platform is and what it answers</i></div></li>
+    <li><span class="n">2</span><div><b>Problem Statement — PS-26006</b><i>SAIL's five chartering questions</i></div></li>
+    <li><span class="n">3</span><div><b>System Architecture</b><i>Three tiers, data flow, repository map</i></div></li>
+    <li><span class="n">4</span><div><b>The Data Layer</b><i>Synthetic generator, 52 features, 35 lanes, 7 vessels, 33 ports</i></div></li>
+    <li><span class="n">5</span><div><b>Module 1 — Freight Rate Forecasting</b><i>XGBoost + LightGBM + LSTM ensemble with quantile CIs</i></div></li>
+    <li><span class="n">6</span><div><b>Module 2 — Vessel Optimizer</b><i>Feasibility gates, scoring, multi-voyage planning</i></div></li>
+    <li><span class="n">7</span><div><b>Module 3 — Delivered Cost Engine</b><i>Eight cost components beyond the freight quote</i></div></li>
+    <li><span class="n">8</span><div><b>Module 4 — Lightering Optimizer</b><i>TPC curve integration, STS costing, weather gating</i></div></li>
+    <li><span class="n">9</span><div><b>Module 5 — Charter vs Spot Engine</b><i>NPV, breakeven, Monte Carlo, VaR</i></div></li>
+    <li><span class="n">10</span><div><b>Module 6 — Risk Summary</b><i>Weighted composite risk scoring</i></div></li>
+    <li><span class="n">11</span><div><b>API Layer</b><i>Ten endpoints, schemas, error handling</i></div></li>
+    <li><span class="n">12</span><div><b>Frontend Dashboard</b><i>Components, charts, design system</i></div></li>
+    <li><span class="n">13</span><div><b>End-to-End Worked Example</b><i>One parcel traced through all six modules</i></div></li>
+    <li><span class="n">14</span><div><b>Limitations &amp; Validity Register</b><i>What is real, what is stubbed, what must be fixed</i></div></li>
+    <li><span class="n">15</span><div><b>Deployment, Reproduction &amp; References</b><i>Run instructions, environment notes, citations</i></div></li>
+  </ol>
+
+  <div class="box warn" style="margin-top:8mm">
+    <span class="bt">Read this first</span>
+    <p>Every freight-rate history, port draft limit, berth-availability figure and weather probability in this
+    repository is <b>synthetic demo data</b>, generated by a seeded simulator in
+    <code>backend/data/generate_synthetic_data.py</code>. It is not Baltic Exchange data, not Clarksons data and not
+    live port information. The models, the engineering and the decision logic are real and inspectable; the
+    <i>numbers they are fitted to are placeholders</i>. Section 14 quantifies exactly how far the current outputs
+    can be trusted.</p>
+  </div>
+</div>
+
+<!-- ================= 1. EXEC ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">1.</span> Executive Summary</h2>
+  <p class="lede">What the platform is, the five questions it answers, and why it is built the way it is.</p>
+
+  <h3>1.1 The one-paragraph version</h3>
+  <p>A chartering desk at SAIL receives a parcel of coal or steel, an origin region and an East Coast discharge
+  port. Historically the answer came from a broker's phone call and a spot fixture. This platform replaces that with a
+  single HTTP call that runs six analytical modules in sequence, each one consuming the previous one's output, and
+  returns one connected recommendation: <i>which ship, at what delivered cost, chartered or spot, entered when.</i></p>
+
+  <h3>1.2 The five questions, and the module that answers each</h3>
+  <table>
+    <thead><tr><th style="width:6mm">#</th><th style="width:52mm">Question</th><th style="width:44mm">Answered by</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>When</b> should we charter?</td><td class="path">models/forecasting.py</td><td>90-day rate forecast with 80% and 95% quantile confidence bands</td></tr>
+      <tr><td>2</td><td><b>What</b> does the voyage truly cost?</td><td class="path">models/cost_calculator.py</td><td>Eight-component delivered cost, not just the freight quote</td></tr>
+      <tr><td>3</td><td><b>Which ship</b> can actually do it?</td><td class="path">models/vessel_optimizer.py</td><td>Feasible vessel chosen from parcel size + both ports' draft, LOA, beam and handling limits — or a multi-voyage plan</td></tr>
+      <tr><td>4</td><td><b>What if</b> the ship is too deep?</td><td class="path">models/lightering.py</td><td>TPC-integrated lightering tonnage, STS cost, weather-gated recommendation</td></tr>
+      <tr><td>5</td><td><b>Charter or spot?</b></td><td class="path">models/decision_engine.py</td><td>NPV comparison, breakeven rate, 1,000-path Monte Carlo, 95% VaR, timing and idle signals</td></tr>
+      <tr><td>—</td><td><b>How risky</b> is the whole plan?</td><td class="path">main.py :: _calculate_risk_summary</td><td>Weighted 0–100 composite across weather, congestion and volatility</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">The user never selects a vessel class. The optimizer derives it, and every downstream module then consumes that derived vessel — this is the single most important architectural decision in the system.</p>
+
+  <h3>1.3 Why the modules are connected rather than separate</h3>
+  <p>Most "AI" tools in this space return a rate number and stop. The modules here are chained so that each one
+  narrows the problem for the next: the <b>optimizer</b> decides the parcel size per voyage, which sets the
+  <b>forecaster's</b> cargo basis; the <b>forecaster's</b> day-1 rate becomes the <b>cost engine's</b> freight input;
+  the optimizer's chosen class becomes the <b>lightering</b> module's hull; and the forecast's confidence band
+  becomes the <b>decision engine's</b> simulation variance. Change the parcel and the entire chain re-derives.</p>
+
+  <div class="grid3">
+    <div class="card"><div class="ch"><span class="cn">1</span>Constraint-first</div>
+      <p>Vessel feasibility is resolved <i>before</i> economics. A 180,000 t Capesize on Newcastle→Paradip is rejected
+      on LOA and beam at Newcastle, not scored and rejected on price.</p></div>
+    <div class="card"><div class="ch"><span class="cn">2</span>Full delivered cost</div>
+      <p>Freight is typically 60–65% of delivered cost. Judging a charter on the freight quote alone is judging
+      35% of the decision.</p></div>
+    <div class="card"><div class="ch"><span class="cn">3</span>Explicit uncertainty</div>
+      <p>Every forecast carries a distribution, not a point. The Monte Carlo propagates that distribution into a
+      probability and a VaR, so the desk sees the downside before committing.</p></div>
+  </div>
+
+  <h3>1.4 Headline measured results (AUS_PAR, 120,000 t coal, June loading)</h3>
+  <p>These are outputs from the running system, reproducible with the commands in Section 15. They illustrate
+  behaviour and magnitudes; they are <b>not</b> market forecasts (see Section 14).</p>
+  <div class="grid4">
+    <div class="kpi"><b>$25.07</b><span>Delivered cost / tonne</span></div>
+    <div class="kpi v"><b>13.36</b><span>Breakeven charter rate $/t</span></div>
+    <div class="kpi g"><b>93.3%</b><span>P(charter cheaper)</span></div>
+    <div class="kpi a"><b>MODERATE</b><span>Composite risk 52/100</span></div>
+  </div>
+  <div class="grid4">
+    <div class="kpi"><b>2 × Panamax</b><span>Kamsarmax, 60 kt each</span></div>
+    <div class="kpi v"><b>0.0357</b><span>Model MAE ($/t)</span></div>
+    <div class="kpi a"><b>−$27k</b><span>VaR 95% on charter</span></div>
+    <div class="kpi g"><b>0 / 35</b><span>Lanes with canal transit</span></div>
+  </div>
+</div>
+
+<!-- ================= 2. PROBLEM ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">2.</span> Problem Statement — PS-26006</h2>
+  <p class="lede">Why SAIL asked for this, and the operational pain it replaces.</p>
+
+  <h3>2.1 Context</h3>
+  <p>SAIL procures bulk raw material — coking coal and steel — on long-term contracts from overseas origins
+  (Australia, the US Gulf, Mozambique, Russia, Indonesia) into Indian East Coast discharge ports. The freight and
+  chartering decision sits between the commercial contract and the physical voyage. The stated problem is that
+  chartering is <b>reactive and one-off</b>: each fixture is negotiated in isolation, at the moment cargo is ready,
+  with no forward view of where rates are heading.</p>
+
+  <h3>2.2 The five operational pain points, and where each is addressed</h3>
+  <table>
+    <thead><tr><th style="width:38mm">Pain point</th><th>Consequence</th><th style="width:38mm">Addressed in</th></tr></thead>
+    <tbody>
+      <tr><td><b>No forward rate view</b></td><td>Fixtures are priced off yesterday's market. A buyer with no view of a coming soft patch overpays.</td><td>§5 Quantile-forecast ensemble</td></tr>
+      <tr><td><b>Freight-quote tunnel vision</b></td><td>Port charges, waiting time, demurrage, weather, insurance and bunkers are discovered <i>after</i> the fixture is signed.</td><td>§7 Eight-component cost engine</td></tr>
+      <tr><td><b>Manual vessel matching</b></td><td>Broker proposes whatever is in the market. A ship that cannot physically enter the discharge berth is offered anyway.</td><td>§6 Constraint-first optimizer</td></tr>
+      <tr><td><b>Draft surprises</b></td><td>A loaded ship arrives at a shallow East Coast port needing ship-to-ship transfer, discovered at anchor.</td><td>§8 TPC-integrated lightering</td></tr>
+      <tr><td><b>Idle time accumulation</b></td><td>Between parcels the vessel waits. Nobody quantifies the low-demand windows or suggests alternative employment.</td><td>§9.6 Operational insights</td></tr>
+      <tr><td><b>Charter vs spot by gut feel</b></td><td>Long-term charter commitments are made without quantifying the probability of regret.</td><td>§9 NPV + Monte Carlo + VaR</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 Scope boundary — what the problem statement does <i>not</i> ask for</h3>
+  <ul>
+    <li><b>No live market feed.</b> The platform consumes a modelled rate series. Wiring a Baltic Exchange or SAIL
+    approved feed is an integration task, not a modelling one — the forecaster's input contract is
+    <code>features_&lt;ROUTE&gt;.csv</code>.</li>
+    <li><b>No cargoes-fixture matching algorithm.</b> The platform optimises the <i>transport</i> decision downstream
+    of a cargo contract, not the counterparty selection itself.</li>
+    <li><b>No legal or charter-party drafting.</b> Time charter versus voyage charter is modelled purely as a
+    discounted cash-flow comparison of the freight leg.</li>
+  </ul>
+
+  <div class="box info">
+    <span class="bt">Design consequence</span>
+    <p>Because the rate feed is modelled, every downstream module is written against a <i>stable interface</i>
+    rather than against a specific data vendor. Replacing the synthetic series with approved data is a file
+    substitution plus a re-run of the generator, not an architectural change. This was a deliberate design
+    choice, and it is also the reason the current numerical outputs must not be presented as market intelligence.</p>
+  </div>
+</div>
+
+<!-- ================= 3. ARCH ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">3.</span> System Architecture</h2>
+  <p class="lede">Three tiers, a strictly one-directional data flow, and a single orchestration endpoint.</p>
+
+  <h3>3.1 Logical architecture</h3>
+  <div class="arch">
+    <div class="tier fe">
+      <div class="th2">Presentation tier — React 18 + Vite + Tailwind v4 + Recharts</div>
+      <div class="row4">
+        <div class="node"><b>Dashboard</b><small>8-field input form, route resolution</small></div>
+        <div class="node"><b>VesselRecommendation</b><small>chosen ship + rejection reasons</small></div>
+        <div class="node"><b>RiskIndicators</b><small>3-dimension risk bars</small></div>
+        <div class="node"><b>ForecastChart</b><small>history + forecast + CI bands</small></div>
+      </div>
+      <div class="row4" style="margin-top:2.2mm">
+        <div class="node"><b>CostBreakdown</b><small>pie + table + vessel compare</small></div>
+        <div class="node"><b>LighteringAnalysis</b><small>TPC profile + option compare</small></div>
+        <div class="node"><b>DecisionPanel</b><small>verdict + NPV + Monte Carlo</small></div>
+        <div class="node"><b>App.jsx / api.js</b><small>status pill, error banners, 120 s timeout</small></div>
+      </div>
+    </div>
+    <div class="flow">▼ &nbsp; HTTPS · JSON &nbsp;·&nbsp; single endpoint <code>POST /api/full-analysis</code> &nbsp;▼</div>
+    <div class="tier be">
+      <div class="th2">Application tier — FastAPI 0.104 · Pydantic v2 · Uvicorn</div>
+      <div class="row">
+        <div class="node"><b>main.py</b><small>10 endpoints<br/>orchestration<br/>risk summary</small></div>
+        <div class="node"><b>forecasting.py</b><small>428 lines<br/>XGB + LGBM + LSTM<br/>quantile CI</small></div>
+        <div class="node"><b>vessel_optimizer.py</b><small>323 lines<br/>feasibility gates<br/>multi-voyage</small></div>
+        <div class="node"><b>cost_calculator.py</b><small>386 lines<br/>8 cost components<br/>canal tariffs</small></div>
+        <div class="node"><b>lightering.py</b><small>373 lines<br/>TPC integration<br/>STS + weather</small></div>
+        <div class="node"><b>decision_engine.py</b><small>450 lines<br/>NPV + MC + VaR<br/>idle signals</small></div>
+      </div>
+    </div>
+    <div class="flow">▼ &nbsp; read-only JSON / CSV &nbsp;▼</div>
+    <div class="tier dt">
+      <div class="th2">Data tier — seeded synthetic generator + static reference tables</div>
+      <div class="row">
+        <div class="node"><b>generate_synthetic_data.py</b><small>OU + GARCH + Fourier<br/>5 years × 35 lanes</small></div>
+        <div class="node"><b>features_*.csv</b><small>35 files<br/>1,705 rows × 57 cols</small></div>
+        <div class="node"><b>routes.json</b><small>35 trade lanes<br/>distance, days, rate</small></div>
+        <div class="node"><b>vessels.json</b><small>7 hulls<br/>DWT, LOA, beam<br/>7-pt TPC curve</small></div>
+        <div class="node"><b>ports.json</b><small>33 ports<br/>draft, handling,<br/>weather by month</small></div>
+        <div class="node"><b>market_indicators.csv</b><small>BDI, VLSFO,<br/>trade volume</small></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>3.2 Request lifecycle of <code>POST /api/full-analysis</code></h3>
+  <p>The orchestration order in <code>main.py::full_analysis</code> is load-bearing, not incidental:</p>
+  <table class="tight">
+    <thead><tr><th style="width:9mm">Step</th><th style="width:40mm">Action</th><th>Why it must be here in the order</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="path">recommend_vessel()</td><td>Determines class, subtype and <b>per-voyage tonnage</b>. Every cost, lightering and decision number downstream is scoped to this parcel, not the original request tonnage.</td></tr>
+      <tr><td>2</td><td class="path">get_forecast(90d)</td><td>Produces the 90-day rate path. Day-1 value becomes the freight rate input to step 3. Cached per route in <code>_forecaster_cache</code>.</td></tr>
+      <tr><td>3</td><td class="path">calculate_total_cost()</td><td>Uses the step-1 vessel and the step-2 rate. If <code>split_voyages &gt; 1</code>, the per-voyage total is multiplied up and cost/tonne recomputed against the original parcel.</td></tr>
+      <tr><td>4</td><td class="path">compare_vessel_options()</td><td>Re-invokes the optimizer internally, then prices only the hulls that passed. Guarantees the comparison never shows an infeasible ship.</td></tr>
+      <tr><td>5</td><td class="path">full_lightering_analysis()</td><td>Evaluates the step-1 hull against the <b>discharge</b> port only, since lightering is a discharge-side problem.</td></tr>
+      <tr><td>6</td><td class="path">charter_decision()</td><td>Calls the same cached forecast (step 2), aggregates days into contract months, runs NPV + breakeven + Monte Carlo.</td></tr>
+      <tr><td>7</td><td class="path">_calculate_risk_summary()</td><td>Reads weather risk (step 5), waiting days (step 3) and CI width (step 2) and combines them.</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Each step is individually wrapped in <code>try/except</code> and its failure is appended to a <code>warnings</code> array rather than aborting the request. A partial analysis with warnings is returned instead of a 500.</p>
+
+  <h3>3.3 Technology stack and the reason for each choice</h3>
+  <table>
+    <thead><tr><th style="width:30mm">Layer</th><th style="width:56mm">Technology (pinned version)</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Gradient boosting</td><td>XGBoost 2.0.3</td><td>Native <code>reg:quantileerror</code> objective — this is the single reason XGBoost is the CI engine. Mean-squared-error models have no honest interval.</td></tr>
+      <tr><td>Gradient boosting</td><td>LightGBM 4.2.0</td><td>Second, structurally different tree learner. Diversifies the ensemble more than a second XGBoost seed would.</td></tr>
+      <tr><td>Sequential</td><td>PyTorch 2.1.2 (LSTM)</td><td>Captures residual autocorrelation the trees smooth out. Deliberately restricted to horizons ≤ 7 days.</td></tr>
+      <tr><td>Preprocessing</td><td>scikit-learn 1.3.2</td><td><code>StandardScaler</code>, <code>TimeSeriesSplit</code>, MAE/RMSE/MAPE metrics.</td></tr>
+      <tr><td>Numerics</td><td>NumPy 1.26.2 · SciPy 1.11.4 · pandas 2.1.4</td><td>Vectorised simulation and time-series assembly.</td></tr>
+      <tr><td>API</td><td>FastAPI 0.104.1 · Pydantic 2.5.3 · Uvicorn 0.24.0</td><td>Request validation with range constraints (<code>ge</code>, <code>le</code>, <code>gt</code>, <code>lt</code>) rejects bad input before any model runs.</td></tr>
+      <tr><td>Frontend</td><td>React 18.2 · Vite 6 · Tailwind CSS 4 · Recharts 2.10</td><td>Vite dev proxy forwards <code>/api</code> to :8000, so no CORS preflight in development.</td></tr>
+      <tr><td>Icons / HTTP</td><td>lucide-react 0.294 · Axios 1.6.2</td><td>Axios timeout set to 120 s to absorb first-call model training.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.4 Repository map</h3>
+<pre><span class="c">├── backend/</span>
+│   ├── main.py                        <span class="c"># 490 lines — FastAPI app, 10 endpoints, orchestration, risk summary</span>
+│   ├── requirements.txt
+│   ├── models/
+│   │   ├── forecasting.py             <span class="c"># 428 lines — FreightLSTM, FreightForecaster, get_forecast()</span>
+│   │   ├── vessel_optimizer.py        <span class="c"># 323 lines — recommend_vessel() single + split voyage</span>
+│   │   ├── cost_calculator.py         <span class="c"># 386 lines — calculate_total_cost(), compare_vessel_options()</span>
+│   │   ├── lightering.py              <span class="c"># 373 lines — TPC integration, STS cost, weather risk</span>
+│   │   └── decision_engine.py         <span class="c"># 450 lines — NPV, breakeven, Monte Carlo, operational insights</span>
+│   └── data/
+│       ├── generate_synthetic_data.py <span class="c"># 318 lines — OU + GARCH + Fourier generator</span>
+│       ├── routes.json                <span class="c"># 35 PS-26006 trade lanes</span>
+│       ├── vessels.json               <span class="c"># 7 hulls with 7-point TPC curves</span>
+│       ├── ports.json                 <span class="c"># 33 ports: draft, LOA, beam, handling, weather</span>
+│       ├── freight_rates.csv          <span class="c"># 1,825 days × 35 rate series</span>
+│       ├── market_indicators.csv      <span class="c"># BDI, VLSFO, trade volume index</span>
+│       └── features_&lt;ROUTE&gt;.csv       <span class="c"># 35 files × 1,705 rows × 57 columns</span>
+├── frontend/
+│   ├── src/App.jsx                    <span class="c"># header, health probe, status pill, offline/no-data banners</span>
+│   ├── src/api.js                     <span class="c"># Axios instance, 120 s timeout, error interceptor</span>
+│   └── src/components/                <span class="c"># 7 components — see Section 12</span>
+├── run.sh / run.bat                   <span class="c"># one-command bootstrap for Linux/macOS and Windows</span>
+├── README.md · CHANGELOG_PS26006.md
+</pre>
+</div>
+
+<!-- ================= 4. DATA ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">4.</span> The Data Layer</h2>
+  <p class="lede">Everything downstream is a function of this layer. It is also where the system's largest caveat lives.</p>
+
+  <h3>4.1 Synthetic market generator</h3>
+  <p><code>generate_synthetic_data.py</code> builds five years (1,825 days, 2020-01-01 → 2024-12-29) of daily
+  observations with four superimposed components. The whole process is seeded with <code>np.random.seed(42)</code>,
+  so the dataset is byte-identical on every regeneration — which is what allows the forecast numbers in this
+  document to be reproducible.</p>
+
+  <h4>4.1.1 Mean-reverting core — Ornstein–Uhlenbeck</h4>
+  <p>Freight rates are modelled as a discrete Ornstein–Uhlenbeck (OU) diffusion, the standard first-order model for
+  a mean-reverting spread or level:</p>
+  <div class="eq">
+    <span class="lbl">EQ 4.1</span>
+    <i>r</i>(<i>t</i>) = <i>r</i>(<i>t</i>−1) + <i>θ</i>(<i>μ</i> − <i>r</i>(<i>t</i>−1)) + <i>σ</i>(<i>t</i>)·<i>ε</i>(<i>t</i>)<br/>
+    where &nbsp; <i>ε</i>(<i>t</i>) ~ 𝒩(0, 1) &nbsp;and&nbsp; <i>r</i>(<i>t</i>) ≥ 0.2<i>μ</i> &nbsp;(floor applied)
+  </div>
+  <div class="eqvar">
+    <div><b><i>r</i>(<i>t</i>)</b> freight rate, USD/tonne</div>
+    <div><b><i>μ</i></b> long-run mean = lane's <code>historical_avg_rate</code></div>
+    <div><b><i>θ</i></b> mean-reversion speed = <b>0.03</b> for every lane</div>
+    <div><b><i>σ</i>(<i>t</i>)</b> conditional volatility from the GARCH state</div>
+    <div><b><i>ε</i>(<i>t</i>)</b> standard normal shock</div>
+    <div><b>Half-life</b> ln2/0.03 ≈ <b>23 days</b></div>
+  </div>
+  <p>A half-life of roughly 23 days is the reason the generated series look so smooth: deviations from the mean
+  decay fast, and the rate is pulled back toward <code>historical_avg_rate</code> almost every week. For
+  AUS_PAR the realised five-year statistics are a mean of <b>$12.96/t</b> inside a range of
+  <b>$12.34 – $13.61</b>. Section 14 explains why this matters for model evaluation.</p>
+
+  <h4>4.1.2 Volatility clustering — GARCH(1,1)</h4>
+  <p>Conditional variance follows a GARCH(1,1) recursion, which is what produces the "calm then turbulent" texture
+  real freight markets have and which a constant-variance simulator cannot:</p>
+  <div class="eq">
+    <span class="lbl">EQ 4.2</span>
+    <i>h</i>(<i>t</i>) = <i>α</i><sub>0</sub> + <i>α</i><sub>1</sub>·<i>ε</i><sub><i>t</i>−1</sub><sup>2</sup> + <i>β</i><sub>1</sub>·<i>h</i>(<i>t</i>−1), &nbsp;&nbsp; <i>σ</i>(<i>t</i>) = √<i>h</i>(<i>t</i>)
+  </div>
+  <div class="eqvar">
+    <div><b><i>α</i><sub>0</sub></b> = 0.05·<i>h</i>(0) — intercept</div>
+    <div><b><i>α</i><sub>1</sub></b> = <b>0.10</b> — ARCH reaction to last shock</div>
+    <div><b><i>β</i><sub>1</sub></b> = <b>0.85</b> — persistence of prior variance</div>
+    <div><b><i>α</i><sub>1</sub>+<i>β</i><sub>1</sub></b> = 0.95 &lt; 1 → covariance-stationary</div>
+  </div>
+  <p>The sum <code>α₁ + β₁ = 0.95</code> is the stationarity condition. At 0.95 the implied variance shock
+  persistence half-life is ≈ 13.5 trading days, which is the correct order of magnitude for a bulk freight
+  volatility cluster.</p>
+
+  <h4>4.1.3 Seasonality — Fourier harmonics</h4>
+  <p>Two sinusoidal harmonics are layered in as daily increments, one anchored on the origin region's demand peak
+  and one on a secondary peak (northern-hemisphere winter, or the southern-hemisphere equivalent for
+  Australia/Indonesia/Mozambique):</p>
+  <div class="eq">
+    <span class="lbl">EQ 4.3</span>
+    S(<i>t</i>) = [ <i>A</i><sub>1</sub>·sin(2π(<i>t</i> − 30.44(<i>m</i><sub>1</sub>−3))/365) + <i>A</i><sub>2</sub>·sin(2π(<i>t</i> − 30.44(<i>m</i><sub>2</sub>−3))/365) ] × 0.01
+  </div>
+  <table class="tight">
+    <thead><tr><th>Origin region</th><th class="r">σ (daily vol.)</th><th class="r">Primary peak</th><th class="r">A₁</th><th class="r">Secondary peak</th><th class="r">A₂</th></tr></thead>
+    <tbody>
+      <tr><td>Australia</td><td class="r">0.24</td><td class="r">October</td><td class="r">2.0</td><td class="r">March</td><td class="r">0.9</td></tr>
+      <tr><td>US</td><td class="r">0.28</td><td class="r">September</td><td class="r">2.5</td><td class="r">March</td><td class="r">1.2</td></tr>
+      <tr><td>Mozambique</td><td class="r">0.25</td><td class="r">November</td><td class="r">2.2</td><td class="r">June</td><td class="r">1.0</td></tr>
+      <tr><td>Russia</td><td class="r">0.30</td><td class="r">December</td><td class="r">2.8</td><td class="r">May</td><td class="r">1.2</td></tr>
+      <tr><td>Indonesia</td><td class="r">0.22</td><td class="r">July</td><td class="r">1.8</td><td class="r">December</td><td class="r">0.8</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Higher-volatility origins (Russia 0.30, US 0.28) carry both wider bands and a stronger seasonal swing — an intentional design choice, since Atlantic and Russian-origin coal routes are genuinely more volatile than Indonesian nickel/coal short-haul.</p>
+
+  <h4>4.1.4 Co-movement with BDI and bunkers</h4>
+  <div class="eq">
+    <span class="lbl">EQ 4.4</span>
+    <i>r</i>(<i>t</i>) = <i>r</i>(<i>t</i>−1) + <i>θ</i>(<i>μ</i>−<i>r</i>(<i>t</i>−1)) + S(<i>t</i>) + <i>σ</i>(<i>t</i>)<i>ε</i>(<i>t</i>) + <i>β</i><sub>bdi</sub>·Δ<i>BDI</i>(<i>t</i>) + <i>β</i><sub>bnr</sub>·Δ<i>B</i>(<i>t</i>)
+  </div>
+  <p>with <code>β_bdi = 0.002·μ/1500</code> (a rising dry index lifts the freight rate) and
+  <code>β_bunker = −0.001·μ/580</code> (<b>negative</b> — a higher fuel price compresses the netback the
+  shipper can pay). That sign convention is the correct economic one and is worth calling out because it is
+  frequently got wrong in naive simulators.</p>
+
+  <h4>4.1.5 Market indicator series</h4>
+  <table>
+    <thead><tr><th style="width:36mm">Series</th><th style="width:26mm">Process</th><th class="r" style="width:22mm">Params</th><th class="r" style="width:30mm">Realised range</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td><b>Baltic Dry Index</b></td><td>OU + seasonal ripple</td><td class="r">μ=1500, θ=0.02, σ=80, floor 300</td><td class="r">561 – 2,712</td><td>Global dry-bulk demand proxy; lagged 1/7/14/30 d</td></tr>
+      <tr><td><b>VLSFO bunker</b></td><td>OU, clipped</td><td class="r">μ=580, θ=0.015, σ=12, clip [300,1000]</td><td class="r">399 – 762</td><td>Fuel cost driver; lagged 1/7/14/30 d</td></tr>
+      <tr><td><b>Trade volume index</b></td><td>OU + seasonal</td><td class="r">μ=100, θ=0.02, σ=1.5, clip [60,140]</td><td class="r">60 – 140</td><td>Global trade activity level</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Feature engineering — the 52 predictors</h3>
+  <p>For each of the 35 lanes a feature file is built. All 52 columns listed in <code>FEATURE_COLS</code>
+  (<code>models/forecasting.py:82</code>) fall into seven families. Formulas are given so each can be reimplemented
+  or audited independently.</p>
+
+  <table>
+    <thead><tr><th style="width:30mm">Family</th><th style="width:11mm" class="c">Count</th><th style="width:40mm">Columns</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td><b>Lagged rates</b></td><td class="c">7</td><td><code>rate_lag_1,3,7,14,30,60,90</code></td><td><code>r(t−k)</code> — direct autoregressive terms</td></tr>
+      <tr><td><b>Rolling statistics</b></td><td class="c">12</td><td><code>rate_rolling_{mean,std,min,max}_{7,14,30}</code></td><td>Sample mean / std / min / max of <code>r</code> over the trailing <i>w</i> days. Encodes the local level <i>and</i> the local range.</td></tr>
+      <tr><td><b>Returns</b></td><td class="c">3</td><td><code>rate_return_{1d,7d,30d}</code></td><td><code>r(t)/r(t−k) − 1</code></td></tr>
+      <tr><td><b>Calendar</b></td><td class="c">4</td><td><code>month, quarter, day_of_week, day_of_year</code></td><td>Raw calendar integers</td></tr>
+      <tr><td><b>Fourier</b></td><td class="c">6</td><td><code>{sin,cos}_{annual,semi_annual,quarterly}</code></td><td>sin/cos(2π·doy/365), sin/cos(4π·doy/365), sin/cos(8π·doy/365). Cycles are encoded <b>continuously</b> so the learner never has to treat day 365 as adjacent to day 1.</td></tr>
+      <tr><td><b>Market levels</b></td><td class="c">3</td><td><code>bdi, bunker_price, trade_volume</code></td><td>Contemporaneous indicator values</td></tr>
+      <tr><td><b>Market lags &amp; deltas</b></td><td class="c">13</td><td><code>{bdi,bunker}_lag_{1,7,14,30}</code>, <code>{bdi,bunker}_change_{7d,30d}</code></td><td>8 lagged levels + 4 percentage changes + <code>trade_volume</code></td></tr>
+      <tr><td><b>Realised volatility</b></td><td class="c">3</td><td><code>realized_vol_{7,14,30}</code></td><td><code>std(Δr/r)_{w} · √252</code> — annualised, the market-standard convention</td></tr>
+      <tr><td><b>Momentum</b></td><td class="c">2</td><td><code>momentum_30d, momentum_90d</code></td><td><code>r(t)/MA_w(r) − 1</code> — distance from the moving average</td></tr>
+    </tbody>
+  </table>
+  <p><b>Target variable.</b> <code>target_rate_1d = rate.shift(-1)</code> — a one-step-ahead point forecast.
+  Two further targets (<code>target_rate_7d</code>, <code>target_rate_30d</code>) are generated and written to
+  the CSV for future multi-horizon work, but only the 1-day target is trained on.</p>
+
+  <div class="grid3">
+    <div class="kpi"><b>1,705</b><span>Rows per lane after NaN drop</span></div>
+    <div class="kpi v"><b>57</b><span>Columns (52 features + date + rate + 3 targets)</span></div>
+    <div class="kpi g"><b>59,675</b><span>Total training rows, all 35 lanes</span></div>
+  </div>
+  <p class="tbl-note">Row count is 1,825 minus 120: the longest lag/rolling window is 90 days and <code>dropna()</code> removes the warm-up period. Each lane is trained independently — there is no cross-lane pooling, so a lane with 1,705 samples trains a model from scratch on first request.</p>
+
+  <h3>4.3 Reference tables</h3>
+
+  <h4>4.3.1 The 35 PS-26006 trade lanes</h4>
+  <p>Five origin regions × seven East Coast discharge ports. Origin and destination jointly determine the lane code
+  (<code>AUS_PAR</code>, <code>RUS_HAL</code>, …) and the lane's <code>historical_avg_rate</code> is the OU
+  process mean <i>μ</i>, so it feeds straight into both the generator and the forecaster's prior.</p>
+  <table class="tight">
+    <thead><tr><th>Origin</th><th>Paradip<br/>PAR</th><th>Vizag<br/>VIZ</th><th>Gangavaram<br/>GAN</th><th>Gopalpur<br/>GOP</th><th>Dhamra<br/>DHA</th><th>Sagar-Sandheads<br/>SAG</th><th>Haldia<br/>HAL</th></tr></thead>
+    <tbody>
+      <tr><td><b>Newcastle, Australia</b></td><td>13.0</td><td>13.4</td><td>13.5</td><td>13.2</td><td>12.9</td><td>14.3</td><td>14.4</td></tr>
+      <tr><td><b>US Gulf</b></td><td>15.0</td><td>15.4</td><td>15.5</td><td>15.2</td><td>14.9</td><td>16.3</td><td>16.4</td></tr>
+      <tr><td><b>Nacala, Mozambique</b></td><td>13.5</td><td>13.9</td><td>14.0</td><td>13.7</td><td>13.4</td><td>14.8</td><td>14.9</td></tr>
+      <tr><td><b>Taman, Russia</b></td><td>12.5</td><td>12.9</td><td>13.0</td><td>12.7</td><td>12.4</td><td>13.8</td><td>13.9</td></tr>
+      <tr><td><b>Taboneo, Indonesia</b></td><td>9.5</td><td>9.9</td><td>10.0</td><td>9.7</td><td>9.4</td><td>10.8</td><td>10.9</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Values are <code>historical_avg_rate</code> in USD/tonne. Two consistent patterns are visible and are economically sensible: (a) rate rises with voyage distance — Sagar-Sandheads and Haldia are the longest Indian legs; (b) rate falls with distance <i>from the origin</i> — Indonesia at 3,200 nm is roughly one-third of the US Gulf at 10,500 nm. Voyage durations run 9–14 days for Indonesia/Australia, 19–21 for Mozambique, 21–23 for Russia, and 31–32 for the US Gulf — implying a consistent 14.1–14.6 kn service speed across every lane.</p>
+
+  <h4>4.3.2 The 7 modelled hulls, with TPC curves</h4>
+  <table class="tight">
+    <thead><tr><th>Class / subtype</th><th class="r">DWT</th><th class="r">LOA m</th><th class="r">Beam m</th><th class="r">Max draft m</th><th class="r">$/day</th><th class="r">Fuel t/day</th><th>TPC range (t/cm)</th></tr></thead>
+    <tbody>
+      <tr><td>Handysize · Standard</td><td class="r">33,000</td><td class="r">170.0</td><td class="r">27.0</td><td class="r">11.5</td><td class="r">11,000</td><td class="r">25</td><td>30.0 → 38.0</td></tr>
+      <tr><td>Supramax · Standard</td><td class="r">58,000</td><td class="r">190.0</td><td class="r">32.2</td><td class="r">13.5</td><td class="r">13,000</td><td class="r">30</td><td>42.0 → 52.0</td></tr>
+      <tr><td>Supramax · Ultramax</td><td class="r">64,000</td><td class="r">199.0</td><td class="r">32.3</td><td class="r">14.0</td><td class="r">14,000</td><td class="r">32</td><td>44.0 → 55.5</td></tr>
+      <tr><td>Panamax · Standard</td><td class="r">75,000</td><td class="r">229.0</td><td class="r">32.3</td><td class="r">14.5</td><td class="r">15,000</td><td class="r">35</td><td>52.0 → 62.8</td></tr>
+      <tr><td>Panamax · Kamsarmax</td><td class="r">82,000</td><td class="r">229.0</td><td class="r">32.3</td><td class="r">14.5</td><td class="r">16,000</td><td class="r">37</td><td>54.5 → 65.5</td></tr>
+      <tr><td>Capesize · Standard</td><td class="r">180,000</td><td class="r">292.0</td><td class="r">45.0</td><td class="r">18.2</td><td class="r">22,000</td><td class="r">55</td><td>78.5 → 93.0</td></tr>
+      <tr><td>Capesize · Newcastlemax</td><td class="r">208,000</td><td class="r">300.0</td><td class="r">47.0</td><td class="r">18.5</td><td class="r">24,000</td><td class="r">60</td><td>85.0 → 101.5</td></tr>
+    </tbody>
+  </table>
+  <p>Each hull carries a <b>7-point TPC curve</b> — tonnes per centimetre of immersion against draft. TPC rises
+  with draft as the waterplane area widens toward the parallel middle body. Worked example, Panamax Standard:
+  52.0 t/cm at 8.0 m → 62.8 t/cm at 14.5 m, a 21% rise. The 7 points are linearly interpolated in
+  <code>interpolate_tpc()</code> and integrated in <code>calculate_lightering_quantity()</code> — see Section 8.</p>
+
+  <h4>4.3.3 The 33 ports</h4>
+  <p>Each port record carries: <code>max_draft_m</code>, <code>max_loa_m</code>, <code>max_beam_m</code>,
+  <code>cargo_handling_rate_tpd</code>, <code>avg_waiting_days</code>, <code>berth_availability</code>,
+  <code>port_charges_usd_per_tonne</code>, and a 12-month <code>weather_delay_prob</code> map.</p>
+  <table class="tight">
+    <thead><tr><th>Port</th><th class="r">Draft m</th><th class="r">LOA m</th><th class="r">Beam m</th><th class="r">t/day</th><th class="r">Wait d</th><th class="r">Berth</th><th class="r">$/t</th><th class="r">Wx prob range</th></tr></thead>
+    <tbody>
+      <tr><td><b>Paradip</b> <span class="pill p-b">discharge</span></td><td class="r">18.5</td><td class="r">300</td><td class="r">45</td><td class="r">75,000</td><td class="r">4.5</td><td class="r">0.70</td><td class="r">1.50</td><td class="r">0.04 – 0.25</td></tr>
+      <tr><td><b>Visakhapatnam</b> <span class="pill p-b">discharge</span></td><td class="r">17.1</td><td class="r">260</td><td class="r">40</td><td class="r">65,000</td><td class="r">3.5</td><td class="r">0.74</td><td class="r">1.60</td><td class="r">0.04 – 0.22</td></tr>
+      <tr><td><b>Gangavaram</b> <span class="pill p-b">discharge</span></td><td class="r">18.0</td><td class="r">300</td><td class="r">45</td><td class="r">80,000</td><td class="r">2.5</td><td class="r">0.82</td><td class="r">1.55</td><td class="r">0.04 – 0.23</td></tr>
+      <tr><td><b>Gopalpur</b> <span class="pill p-b">discharge</span></td><td class="r"><b>13.0</b></td><td class="r">230</td><td class="r">34</td><td class="r">45,000</td><td class="r">3.0</td><td class="r">0.78</td><td class="r">1.45</td><td class="r">0.04 – 0.23</td></tr>
+      <tr><td><b>Dhamra</b> <span class="pill p-b">discharge</span></td><td class="r">18.0</td><td class="r">300</td><td class="r">45</td><td class="r">75,000</td><td class="r">2.5</td><td class="r">0.82</td><td class="r">1.35</td><td class="r">0.05 – 0.25</td></tr>
+      <tr><td><b>Sagar-Sandheads</b> <span class="pill p-b">discharge</span></td><td class="r"><b>11.5</b></td><td class="r">210</td><td class="r">32</td><td class="r">35,000</td><td class="r">6.0</td><td class="r"><b>0.62</b></td><td class="r">1.55</td><td class="r">0.04 – 0.23</td></tr>
+      <tr><td><b>Haldia</b> <span class="pill p-b">discharge</span></td><td class="r"><b>10.5</b></td><td class="r">230</td><td class="r">32</td><td class="r">40,000</td><td class="r">5.0</td><td class="r"><b>0.65</b></td><td class="r">1.40</td><td class="r">0.05 – 0.28</td></tr>
+      <tr><td><b>Newcastle</b> <span class="pill p-a">load</span></td><td class="r">16.5</td><td class="r">250</td><td class="r">38</td><td class="r">70,000</td><td class="r">4.0</td><td class="r">0.78</td><td class="r">2.30</td><td class="r">0.06 – 0.12</td></tr>
+      <tr><td><b>US Gulf</b> <span class="pill p-a">load</span></td><td class="r">14.0</td><td class="r">245</td><td class="r">34</td><td class="r">55,000</td><td class="r">2.5</td><td class="r">0.85</td><td class="r">2.80</td><td class="r">—</td></tr>
+      <tr><td><b>Nacala</b> <span class="pill p-a">load</span></td><td class="r">14.5</td><td class="r">245</td><td class="r">34</td><td class="r">45,000</td><td class="r">3.5</td><td class="r">0.76</td><td class="r">2.10</td><td class="r">—</td></tr>
+      <tr><td><b>Taman</b> <span class="pill p-a">load</span></td><td class="r">15.0</td><td class="r">250</td><td class="r">34</td><td class="r">50,000</td><td class="r">4.0</td><td class="r">0.72</td><td class="r">2.00</td><td class="r">—</td></tr>
+      <tr><td><b>Taboneo</b> <span class="pill p-a">load</span></td><td class="r">14.0</td><td class="r">245</td><td class="r">34</td><td class="r">55,000</td><td class="r">4.0</td><td class="r">0.72</td><td class="r">1.80</td><td class="r">—</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Only 12 of the 33 ports appear in any PS-26006 lane — 5 load ports (Newcastle, US Gulf, Nacala,
+  Taman, Taboneo) and 7 discharge ports. The remaining 21 are reference ballast and transhipment entries
+  (Rotterdam, Singapore, Richards Bay, Mundra, Santos, Qingdao and others). The seven discharge ports span
+  8 metres of draft (10.5 → 18.5 m) and 40,000 → 80,000 t/day of handling capacity — that spread is precisely what
+  makes the vessel optimizer non-trivial, and it is why Gopalpur, Haldia and Sagar-Sandheads force small hulls or
+  multi-voyage plans (§6.4).</p>
+
+  <h4>4.3.4 The monsoon signal in the weather maps</h4>
+  <p>The 12-month <code>weather_delay_prob</code> map is the most operationally realistic piece of data in the
+  repository, because it reproduces the real East Coast Indian monsoon timing:</p>
+  <table class="tight">
+    <thead><tr><th>Port</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead>
+    <tbody>
+      <tr><td>Paradip</td><td>.05</td><td>.04</td><td>.04</td><td>.06</td><td>.10</td><td class="r"><b>.20</b></td><td class="r"><b>.25</b></td><td class="r"><b>.22</b></td><td>.15</td><td>.10</td><td>.06</td><td>.05</td></tr>
+      <tr><td>Haldia</td><td>.06</td><td>.05</td><td>.05</td><td>.08</td><td>.12</td><td class="r"><b>.22</b></td><td class="r"><b>.28</b></td><td class="r"><b>.25</b></td><td>.18</td><td>.12</td><td>.08</td><td>.06</td></tr>
+      <tr><td>Newcastle <span style="color:#6b7f96">(load)</span></td><td>.08</td><td>.07</td><td>.06</td><td>.08</td><td>.10</td><td>.12</td><td>.10</td><td>.08</td><td>.07</td><td>.06</td><td>.07</td><td>.08</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Peak disruption in July–August at the discharge ports, near-flat at the load ports — correct for the
+  Bay of Bengal branch of the South-West monsoon versus a sheltered Australian load port. This drives both the cost
+  engine's weather-disruption line and the lightering module's hard weather veto.</p>
+</div>
+
+<!-- ================= 5. FORECASTING ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">5.</span> Module 1 — Freight Rate Forecasting</h2>
+  <p class="lede">A three-member ensemble with genuine quantile-based confidence intervals, in
+  <code>backend/models/forecasting.py</code>.</p>
+
+  <h3>5.1 Why an ensemble, and why this specific combination</h3>
+  <table class="tight">
+    <thead><tr><th style="width:26mm">Member</th><th style="width:44mm">Role</th><th>Justification</th></tr></thead>
+    <tbody>
+      <tr><td><b>XGBoost</b><br/><code>reg:squarederror</code></td><td>Point estimate, member ½</td><td>300 trees, depth 6, lr 0.05. Captures the feature <i>interactions</i> that dominate tabular shipping data (e.g. "high BDI matters only when momentum is positive").</td></tr>
+      <tr><td><b>XGBoost</b><br/><code>reg:quantileerror</code></td><td><b>Confidence bounds</b> ×4</td><td>Trained separately at α = 0.025, 0.10, 0.90, 0.975. Each estimates a conditional quantile of the distribution, not a symmetric error bar. This is the only component that makes the intervals honest.</td></tr>
+      <tr><td><b>LightGBM</b></td><td>Point estimate, member ½</td><td>Leaf-wise growth and a different binning scheme produce decorrelated errors from XGBoost, so the 50/50 average genuinely reduces variance rather than re-weighting one model.</td></tr>
+      <tr><td><b>LSTM</b><br/>(PyTorch)</td><td>Residual correction, h ≤ 7 d</td><td>Trained on the <i>residuals</i> of the tree ensemble, not on the raw series. A tree ensemble cannot represent smooth sequential patterns in what is left over; an LSTM can. Decay factor 1−(h−1)/7 fades it out by day 7.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="eq">
+    <span class="lbl">EQ 5.1 — final point forecast</span>
+    <i>ŷ</i>(<i>h</i>) = 0.5·<i>XGB</i><sub>med</sub>(<i>h</i>) + 0.5·<i>LGBM</i>(<i>h</i>) + <b>1</b><sub>[<i>h</i>≤7]</sub> · <i>LSTM</i>(<i>h</i>) · (1 − (<i>h</i>−1)/7)
+  </div>
+
+  <h3>5.2 LSTM architecture</h3>
+  <pre>FreightLSTM(input_size=52, hidden_size=<span class="f">64</span>, num_layers=<span class="f">2</span>, dropout=<span class="f">0.2</span>)
+  ├─ nn.LSTM(52 → 64, 2 layers, batch_first=True, dropout=0.2)
+  ├─ take last timestep output:  lstm_out[:, -1, :]
+  ├─ nn.Dropout(0.2)
+  └─ nn.Linear(64 → 1)          <span class="c"># scalar residual correction, in $/tonne</span></pre>
+  <div class="grid4">
+    <div class="kpi v"><b>30</b><span>Lookback window (days)</span></div>
+    <div class="kpi v"><b>50</b><span>Full-batch epochs</span></div>
+    <div class="kpi"><b>1e-3</b><span>Adam learning rate</span></div>
+    <div class="kpi"><b>MSE</b><span>Loss function</span></div>
+  </div>
+  <p class="tbl-note">Parameter count 63,553 (LSTM 63,488 + Linear 65), verified by
+  <code>sum(p.numel() for p in model.parameters())</code>. Training is full-batch over 1,334 sliding sequences
+  (1,364 − 30 lookback), 50 epochs × one step — a deliberate trade: it keeps a cold request inside the 30–60 s
+  budget at the cost of a properly shuffled mini-batch loop. A production version should switch to
+  <code>DataLoader</code> with batch size 64 and early stopping on a validation residual split.</p>
+
+  <h3>5.3 Training procedure</h3>
+  <table class="tight">
+    <thead><tr><th style="width:9mm">#</th><th style="width:44mm">Step</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Load <code>features_&lt;ROUTE&gt;.csv</code></td><td>1,705 rows. Raises <code>FileNotFoundError</code> with an actionable message if the generator has not been run.</td></tr>
+      <tr><td>2</td><td>Chronological 80/20 split</td><td><code>split_idx = int(0.8·1705) = 1364</code>. Train 1,364 · validation 341. <b>No shuffling</b> — a shuffled split would leak future information into the training set and inflate the reported error.</td></tr>
+      <tr><td>3</td><td>Standardise features</td><td><code>StandardScaler</code> fitted on train only, applied to validation. Required for the LSTM; harmless and mildly helpful for the trees.</td></tr>
+      <tr><td>4</td><td>Fit XGBoost median</td><td>300 estimators, depth 6, lr 0.05, <code>subsample=0.8</code>, <code>colsample_bytree=0.8</code>, seed 42, with <code>eval_set</code> for early-stopping signal.</td></tr>
+      <tr><td>5</td><td>Fit 4 quantile XGBoosts</td><td>200 estimators, depth 5, lr 0.05. α = 0.10 / 0.90 → 80% band; α = 0.025 / 0.975 → 95% band.</td></tr>
+      <tr><td>6</td><td>Fit LightGBM</td><td>300 estimators, depth 6, lr 0.05, same subsampling, seed 42.</td></tr>
+      <tr><td>7</td><td>Compute ensemble residuals</td><td><code>ε = y − (0.5·XGB + 0.5·LGBM)</code> on the <b>training</b> split.</td></tr>
+      <tr><td>8</td><td>Build 30-day sequences, fit LSTM</td><td><code>_create_sequences()</code> builds overlapping windows; a second scaler standardises the LSTM inputs; Adam/MSE for 50 epochs; then <code>.eval()</code>.</td></tr>
+      <tr><td>9</td><td>Score on validation</td><td>MAE, RMSE, MAPE of the <b>tree ensemble</b> (the LSTM residual term is not scored — see §14.3).</td></tr>
+      <tr><td>10</td><td>Cache by route</td><td><code>_forecaster_cache[route_code]</code>. Verified: first request for a lane 6.55 s, second 0.10 s.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 Confidence interval mathematics</h3>
+  <p>Interval half-widths come from the quantile models and are then <b>scaled by √h</b> for multi-step horizons:</p>
+  <div class="eq">
+    <span class="lbl">EQ 5.2</span>
+    <i>W</i><sub>80</sub>(<i>h</i>) = [ <i>Q</i><sub>0.90</sub>(<i>x<sub>h</sub></i>) − <i>Q</i><sub>0.10</sub>(<i>x<sub>h</sub></i>) ] · √<i>h</i><br/>
+    <i>W</i><sub>95</sub>(<i>h</i>) = [ <i>Q</i><sub>0.975</sub>(<i>x<sub>h</sub></i>) − <i>Q</i><sub>0.025</sub>(<i>x<sub>h</sub></i>) ] · √<i>h</i>
+  </div>
+  <p>The √<i>h</i> factor is not arbitrary. For a random walk, the variance of an <i>h</i>-step forecast error is
+  <i>h</i> times the one-step variance, so the standard deviation grows as √<i>h</i>. Applying the same reasoning
+  to a quantile spread gives the widening above. Empirically on AUS_PAR the 95% band grows from
+  $13.36–$13.45 at day 1 to $12.09–$14.63 at day 30 and $11.16–$15.55 at day 90 — a band of
+  <b>0.67%</b> → <b>19.0%</b> → <b>32.9%</b> of the point forecast. The bands are correctly ordered (95% ⊃ 80%)
+  and correctly widening.</p>
+
+  <div class="box warn">
+    <span class="bt">Caveat on the multi-step path</span>
+    <p>The forecast is generated by iterating the one-step model. Only the <code>rate_lag_1</code> column is
+    refreshed between steps; the other 51 features are frozen at their last observed values. The consequence is
+    visible in the output: day 1 = $13.40, day 3 = $13.36, and days 5–90 all sit at $13.36. <b>The point path is
+    effectively flat after day 3.</b> The confidence bands continue to widen correctly, so the interval is
+    informative even though the central path is not. Section 14.3 records this as the highest-priority
+    modelling fix.</p>
+  </div>
+
+  <h3>5.5 Measured performance and what it means</h3>
+  <table>
+    <thead><tr><th style="width:30mm">Metric</th><th class="r" style="width:24mm">AUS_PAR</th><th>Interpretation</th></tr></thead>
+    <tbody>
+      <tr><td>MAE</td><td class="r"><b>$0.0357 / t</b></td><td>Average absolute miss on a $13/t rate = 0.27% of level.</td></tr>
+      <tr><td>RMSE</td><td class="r"><b>$0.0450 / t</b></td><td>RMSE &gt; MAE as expected — a small number of larger misses inflate the quadratic penalty.</td></tr>
+      <tr><td>MAPE</td><td class="r"><b>0.274 %</b></td><td>Reported on the dashboard's "Model MAPE" card.</td></tr>
+      <tr><td>Validation samples</td><td class="r">341</td><td>20% of 1,705, chronologically the most recent 341 days.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>5.5.1 Measured feature importance (XGBoost split gain, AUS_PAR, top 10)</h4>
+  <table class="tight">
+    <thead><tr><th style="width:56mm">Feature</th><th class="c">Family</th><th style="width:44mm">Share of total gain</th><th class="r" style="width:18mm">%</th></tr></thead>
+    <tbody>
+      <tr><td><code>rate_rolling_max_7</code></td><td>Rolling</td><td><span class="bar"><i style="width:85%"></i></span></td><td class="r">42.4</td></tr>
+      <tr><td><code>rate_lag_1</code></td><td>Lag</td><td><span class="bar"><i style="width:80%"></i></span></td><td class="r">39.8</td></tr>
+      <tr><td><code>rate_rolling_min_7</code></td><td>Rolling</td><td><span class="bar"><i style="width:17%"></i></span></td><td class="r">8.3</td></tr>
+      <tr><td><code>rate_rolling_mean_7</code></td><td>Rolling</td><td><span class="bar"><i style="width:6%"></i></span></td><td class="r">2.8</td></tr>
+      <tr><td><code>momentum_30d</code></td><td>Momentum</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.5</td></tr>
+      <tr><td><code>rate_return_1d</code></td><td>Return</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.5</td></tr>
+      <tr><td><code>rate_rolling_mean_14</code></td><td>Rolling</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.4</td></tr>
+      <tr><td><code>day_of_year</code></td><td>Calendar</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.4</td></tr>
+      <tr><td><code>rate_rolling_min_30</code></td><td>Rolling</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.3</td></tr>
+      <tr><td><code>rate_rolling_max_14</code></td><td>Rolling</td><td><span class="bar"><i style="width:1%"></i></span></td><td class="r">0.3</td></tr>
+      <tr><td colspan="2"><b>All BDI, bunker, trade-volume and Fourier seasonal terms, combined</b></td><td><span class="bar v"><i style="width:4%"></i></span></td><td class="r"><b>2.1</b></td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Total split gain 1.502. The top two features alone account for <b>82.2%</b> of all gain in the
+  model, and both are functions of the rate's own recent history.</p>
+  <div class="box crit">
+    <span class="bt">This is the most important diagnostic in the document</span>
+    <p>Gain is concentrated almost entirely in <code>rate_rolling_max_7</code> and <code>rate_lag_1</code> — that
+    is, the learner has discovered that <b>tomorrow's rate ≈ today's rate</b>. Every exogenous driver, taken
+    together, contributes 2.1%. The reason is structural, not a coding fault: the OU generator reverts to a
+    constant <i>μ</i> with a 23-day half-life and a narrow realised range, so the series is close to a martingale
+    and persistence is very nearly the optimal predictor. <b>The 0.274% MAPE therefore measures the generator's
+    smoothness, not predictive skill.</b> On real, regime-switching freight data the importance distribution would
+    be expected to shift materially toward BDI, bunker and the seasonal Fourier terms. This must be re-measured on
+    approved data before any accuracy claim is made.</p>
+  </div>
+</div>
+
+<!-- ================= 6. VESSEL ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">6.</span> Module 2 — Vessel Optimizer</h2>
+  <p class="lede">Constraint-first vessel selection and multi-voyage planning, in
+  <code>backend/models/vessel_optimizer.py</code>. Runs in under 10 ms — it contains no model inference.</p>
+
+  <h3>6.1 Design principle: gates, then scores</h3>
+  <p>The optimizer never ranks an infeasible ship. It applies five <b>hard gates</b> that produce a rejection list
+  with human-readable reasons, and only then scores the survivors. This is why the API can return
+  <i>"Capesize (Newcastlemax) rejected: LOA 300 m exceeds route limit 250 m"</i> — the desk learns
+  <i>why</i> the obvious large ship is unavailable, not merely that it lost.</p>
+
+  <h3>6.2 The five feasibility gates</h3>
+  <table>
+    <thead><tr><th style="width:9mm">Gate</th><th style="width:38mm">Constraint</th><th>Rule and rationale</th></tr></thead>
+    <tbody>
+      <tr><td>G1</td><td><b>Parcel vs capacity</b></td><td><code>Q ≤ 0.95 · DWT</code>. The 5% margin is an explicit operational reserve — the code comment records it as preventing a recommendation "at 100% DWT".</td></tr>
+      <tr><td>G2</td><td><b>Loaded draft</b></td><td><code>d(Q) ≤ min(d_origin, d_dest)</code>. The <b>minimum</b> of the two ports binds, because a ship must be able to enter both. This single gate is what excludes Capesize from most PS-26006 lanes.</td></tr>
+      <tr><td>G3</td><td><b>LOA</b></td><td><code>LOA ≤ min(LOA_origin, LOA_dest)</code> — berth and approach-channel length.</td></tr>
+      <tr><td>G4</td><td><b>Beam</b></td><td><code>B ≤ min(B_origin, B_dest)</code> — berth width and channel constraint.</td></tr>
+      <tr><td>G5</td><td><b>Handling rate</b></td><td>Not a rejection gate but a score input: <code>handling_days = Q / min(tpd_origin, tpd_dest)</code>. The slower berth sets the pace.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>6.2.1 Draft estimation model</h4>
+  <p>Draft is interpolated linearly between the vessel's light draft (first TPC-curve point) and its maximum
+  designed draft, scaled by the load factor:</p>
+  <div class="eq">
+    <span class="lbl">EQ 6.1</span>
+    <i>λ</i> = min(1, <i>Q</i> / DWT) &nbsp;&nbsp;&nbsp; <i>d</i>(<i>Q</i>) = <i>d</i><sub>min</sub> + (<i>d</i><sub>max</sub> − <i>d</i><sub>min</sub>) · <i>λ</i>
+  </div>
+  <p class="tbl-note">A real hydrostatic calculation would integrate the vessel's actual waterplane area against
+  cargo weight. This linear surrogate is monotone, correctly bounded, and cheap — adequate for a feasibility
+  screen, and the reason the same function can be reused by the lightering module without inconsistency.</p>
+
+  <h4>6.2.2 Material preference matrix</h4>
+  <p>Material is a <b>preference, not an exclusion</b> — the code states this explicitly. Feasibility gates decide
+  admissibility; material fit only shifts the score.</p>
+  <table class="tight">
+    <thead><tr><th>Material</th><th class="r">Handysize</th><th class="r">Supramax</th><th class="r">Panamax</th><th class="r">Capesize</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td><b>Coal</b></td><td class="r">0.65</td><td class="r">0.90</td><td class="r"><b>1.00</b></td><td class="r">0.95</td><td>Panamax is the global coal standard; large coal parcels want big holds.</td></tr>
+      <tr><td><b>Steel</b></td><td class="r"><b>1.00</b></td><td class="r">0.95</td><td class="r">0.82</td><td class="r">0.65</td><td>Steel is dense and parcelised — smaller holds suit stowage and grab handling.</td></tr>
+    </tbody>
+  </table>
+  <p>Consequence worth noting: for the <i>same</i> 55,000 t parcel on Newcastle→Paradip, coal selects
+  <b>Panamax (Standard)</b> and steel selects <b>Supramax (Ultramax)</b> — the material genuinely changes the ship.</p>
+
+  <h3>6.3 The feasibility score</h3>
+  <div class="eq">
+    <span class="lbl">EQ 6.2</span>
+    <i>S</i> = 100 · [ 0.40·<i>M</i> + 0.30·<i>U</i> + 0.20·<i>T</i> + 0.10·<b>1</b>[<i>d</i> ≤ <i>d</i><sub>lim</sub>] ]<br/><br/>
+    <i>U</i> = max(0, 1 − |<i>λ</i> − 0.72|) &nbsp;&nbsp;<span style="font-family:Inter;font-size:8pt;color:#6b7f96">← utilisation, peaked at 72% DWT</span><br/>
+    <i>T</i> = max(0, 1 − min(1, (<i>H</i> + <i>W</i>)/25)) &nbsp;&nbsp;<span style="font-family:Inter;font-size:8pt;color:#6b7f96">← turnaround</span><br/>
+    <i>W</i> = <i>w</i><sub>o</sub>/<i>b</i><sub>o</sub> + <i>w</i><sub>d</sub>/<i>b</i><sub>d</sub> &nbsp;&nbsp;<span style="font-family:Inter;font-size:8pt;color:#6b7f96">← expected waiting days</span><br/>
+    <i>H</i> = <i>Q</i> / min(tpd<sub>o</sub>, tpd<sub>d</sub>) &nbsp;&nbsp;<span style="font-family:Inter;font-size:8pt;color:#6b7f96">← cargo handling days</span>
+  </div>
+  <div class="eqvar">
+    <div><b>0.40 · <i>M</i></b> material fit — dominant weight</div>
+    <div><b>0.30 · <i>U</i></b> utilisation, ideal 72% DWT</div>
+    <div><b>0.20 · <i>T</i></b> turnaround exposure</div>
+    <div><b>0.10 · 1</b> draft compliance (1 after gates pass)</div>
+  </div>
+  <p>The waiting model <code>W</code> is the port's mean wait deflated by berth availability. For
+  Newcastle→Paradip: <code>4.0/0.78 + 4.5/0.70 = 5.13 + 6.43 = 11.56 d</code>. This is the single largest
+  non-freight cost in the system and is revisited in §7.4.</p>
+  <p><b>Tie-breaking.</b> Candidates sort by <code>(feasibility_score, −class_order)</code> descending, so equal
+  scores resolve to the <i>larger</i> class — a deliberate preference for fewer voyages at equal fit.</p>
+
+  <h3>6.4 Multi-voyage planning</h3>
+  <p>When no single hull clears gate G1, the optimizer does not give up. It computes the largest parcel each hull
+  can carry <i>within the route draft limit</i>, then solves for the voyage count:</p>
+  <div class="eq">
+    <span class="lbl">EQ 6.3</span>
+    <i>f</i><sub>d</sub> = min(1, (<i>d</i><sub>lim</sub> − <i>d</i><sub>min</sub>)/(<i>d</i><sub>max</sub> − <i>d</i><sub>min</sub>))<br/>
+    <i>C</i><sub>voy</sub> = min(0.95·DWT, DWT·<i>f</i><sub>d</sub>)<br/>
+    <i>n</i> = ⌈ <i>Q</i> / <i>C</i><sub>voy</sub> ⌉ &nbsp;&nbsp;&nbsp; per-voyage parcel = <i>Q</i>/<i>n</i>
+  </div>
+  <p>The split-mode score re-weights the objective to suit the new problem:</p>
+  <div class="eq">
+    <span class="lbl">EQ 6.4</span>
+    <i>S</i><sub>split</sub> = 100 · [ 0.45·(1/<i>n</i>) + 0.30·<i>M</i> + 0.15·<i>U</i> + 0.10·<i>T</i> ]
+  </div>
+  <p>Minimising voyage count is now the primary term at 45% weight — a two-voyage plan on bigger ships beats a
+  five-voyage plan on Handysizes even at worse material fit. Candidates sort by
+  <code>(split_voyages, −feasibility_score)</code>: fewest voyages first.</p>
+
+  <h3>6.5 Status codes</h3>
+  <table class="tight">
+    <thead><tr><th style="width:32mm">Status</th><th>Meaning</th><th style="width:44mm">Downstream behaviour</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p-g">FEASIBLE</span></td><td>One hull carries the whole parcel.</td><td>Cost, lightering and decision modules run on that hull at full parcel.</td></tr>
+      <tr><td><span class="pill p-a">FEASIBLE_SPLIT</span></td><td>Parcel requires <i>n</i> voyages.</td><td>Modules run on <code>per_voyage_cargo_tonnes</code>; the cost total is multiplied by <i>n</i> and cost/tonne recomputed on the original parcel.</td></tr>
+      <tr><td><span class="pill p-r">NO_FEASIBLE_VESSEL</span></td><td>No hull in the fleet satisfies the constraints, even split.</td><td>Cost, lightering and decision modules return <code>null</code>; the frontend shows an advisory to change port or parcel.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.6 Verified behaviour — six parcels, six outcomes</h3>
+  <table class="tight">
+    <thead><tr><th>Lane · parcel</th><th>Status</th><th>Selected</th><th class="r">Score</th><th>Constraint that dominated</th></tr></thead>
+    <tbody>
+      <tr><td>AUS_PAR · 55,000 t coal</td><td><span class="pill p-g">FEASIBLE</span></td><td>Panamax (Standard)</td><td class="r">89.7</td><td>Capesize blocked by Newcastle LOA 250 m / beam 38 m; Handysize too small</td></tr>
+      <tr><td>AUS_PAR · 55,000 t <b>steel</b></td><td><span class="pill p-g">FEASIBLE</span></td><td>Supramax (Ultramax)</td><td class="r">83.9</td><td>Material fit inverts the choice vs. the coal case</td></tr>
+      <tr><td>AUS_PAR · 120,000 t coal</td><td><span class="pill p-a">SPLIT</span></td><td>Panamax (Kamsarmax) ×2 @ 60 kt</td><td class="r">72.4</td><td>All 7 hulls failed G1; 2 voyages minimise cost</td></tr>
+      <tr><td>AUS_HAL · 120,000 t coal</td><td><span class="pill p-a">SPLIT</span></td><td>Handysize ×5 @ 24 kt</td><td class="r">48.0</td><td><b>Haldia draft 10.5 m</b> — every hull ≥ Supramax fails G2 <i>and</i> G3</td></tr>
+      <tr><td>USA_GOP · 40,000 t coal</td><td><span class="pill p-g">FEASIBLE</span></td><td>Supramax (Standard)</td><td class="r">88.9</td><td>Gopalpur LOA 230 m / beam 34 m exclude both Capesizes</td></tr>
+      <tr><td>RUS_SAG · 150,000 t coal</td><td><span class="pill p-a">SPLIT</span></td><td>Handysize ×5 @ 30 kt</td><td class="r">44.2</td><td><b>Sagar-Sandheads draft 11.5 m, LOA 210 m</b> — 4 distinct gates fire per hull</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">The Haldia and Sagar-Sandheads rows are the payoff of the constraint-first design: a 120,000 t and a
+  150,000 t parcel respectively reduce to 5 Handysize voyages because the discharge berth physically cannot take
+  anything larger. A price-scoring approach would have "recommended" a Capesize and been wrong.</p>
+</div>
+
+<!-- ================= 7. COST ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">7.</span> Module 3 — Total Delivered Cost Engine</h2>
+  <p class="lede">Eight additive cost components, in <code>backend/models/cost_calculator.py</code>. The point of the
+  module is the components the freight quote does not contain.</p>
+
+  <h3>7.1 The cost identity</h3>
+  <div class="eq">
+    <span class="lbl">EQ 7.1</span>
+    C<sub>total</sub> = C<sub>freight</sub> + C<sub>port</sub> + C<sub>wait</sub> + C<sub>demurrage</sub> + C<sub>disrupt</sub> + C<sub>canal</sub> + C<sub>ins</sub> + C<sub>bunker</sub><br/>
+    <i>C</i><sub>per tonne</sub> = C<sub>total</sub> / <i>Q</i>
+  </div>
+  <div class="box warn">
+    <span class="bt">Note on the "nine components" claim</span>
+    <p>The README advertises nine cost components. The summation in <code>calculate_total_cost()</code> contains
+    <b>eight</b>. The ninth — lightering — is computed by a separate module and rendered on its own tab, but it is
+    <b>not</b> added to <code>total_cost_usd</code>. So on a lightering voyage the delivered-cost total understates
+    the true cost by the entire STS operation. This is a documentation/code mismatch and a real accounting gap;
+    both are logged in Section 14.</p>
+  </div>
+
+  <h3>7.2 Component-by-component specification</h3>
+  <table>
+    <thead><tr><th style="width:26mm">Component</th><th style="width:56mm">Formula as implemented</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 · Freight</b></td><td><code>C = r · Q</code></td><td><i>r</i> = forecaster day-1 rate (USD/t). The only component quoted by a broker.</td></tr>
+      <tr><td><b>2 · Port charges</b></td><td><code>C = (p<sub>o</sub> + p<sub>d</sub>) · Q</code></td><td>Per-tonne tariff at each end. For Newcastle ($2.30) → Paradip ($1.50) the $0.80/t spread is 6.0% of the freight rate — and the load port is <i>more</i> expensive here, which inverts the usual intuition.</td></tr>
+      <tr><td><b>3 · Waiting time</b></td><td><code>W = w<sub>o</sub>/b<sub>o</sub> + w<sub>d</sub>/b<sub>d</sub></code><br/><code>C = W · daily_rate</code></td><td>Expected berth wait at both ends, charged at the vessel's daily charter rate. See §7.4 — this is the module's largest line item after freight.</td></tr>
+      <tr><td><b>4 · Demurrage</b></td><td><code>rate = 1.5 · daily_rate</code><br/><code>days = max(0, 2Q/(DWT/3.5) − 2·L)</code><br/><code>C = days · rate</code></td><td>Loading rate assumed DWT/3.5 t/day; port time doubled for load + discharge; <i>L</i> = 5 allowed laydays per call. The 1.5× multiplier on the daily rate is the standard charter-party convention.</td></tr>
+      <tr><td><b>5 · Weather disruption</b></td><td><code>C = (p<sub>o</sub>(m) + p<sub>d</sub>(m)) · 3.0 · daily_rate</code></td><td>Monthly weather-delay probabilities from <code>ports.json</code> for the chosen loading month; 3.0 days is the assumed mean event duration. Directly month-sensitive — see §4.3.4.</td></tr>
+      <tr><td><b>6 · Canal transit</b></td><td>Suez: <code>SCNT·rate</code>, SCNT = 0.6·DWT<br/>Panama: <code>PCUMS·rate</code>, PCUMS = 0.55·DWT</td><td>Tiered tariffs (Suez $7.88 down to $4.53/SCNT; Panama $5.25 → $5.01/PCUMS). <b>Currently unreachable — see §14.2.</b></td></tr>
+      <tr><td><b>7 · Insurance</b></td><td><code>C = 0.002 · v · Q</code></td><td>Marine cargo at 0.2% of cargo value, inside the 0.1–0.3% market range.</td></tr>
+      <tr><td><b>8 · Bunker</b></td><td><code>C = fuel_t_day · D · bunker_price</code></td><td>Fuel consumption × route voyage days × VLSFO price. The single largest exposure to the bunker input: a $50/t move changes cost by $22,200 on a 12-day Panamax voyage.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 Worked cost breakdown — AUS_PAR, 120,000 t coal, June</h3>
+  <p>As returned by <code>POST /api/full-analysis</code>. Two Panamax (Kamsarmax) voyages of 60,000 t each;
+  freight rate = forecaster day-1 value $13.40/t; cargo value $120/t; VLSFO $580/t.</p>
+  <table>
+    <thead><tr><th>Component</th><th class="r" style="width:32mm">Per voyage (USD)</th><th class="r" style="width:26mm">× 2 voyages</th><th class="r" style="width:18mm">Share</th><th style="width:34mm">Driver</th></tr></thead>
+    <tbody>
+      <tr><td>Freight</td><td class="r">804,000.00</td><td class="r">1,608,000.00</td><td class="r">53.5%</td><td>13.40 × 60,000</td></tr>
+      <tr><td>Port charges — loading</td><td class="r">138,000.00</td><td class="r">276,000.00</td><td class="r">9.2%</td><td>Newcastle $2.30/t</td></tr>
+      <tr><td>Port charges — discharge</td><td class="r">90,000.00</td><td class="r">180,000.00</td><td class="r">6.0%</td><td>Paradip $1.50/t</td></tr>
+      <tr><td><b>Waiting time</b> <span class="pill p-a">11.6 d</span></td><td class="r">184,908.42</td><td class="r">369,816.84</td><td class="r"><b>12.3%</b></td><td>(4.0/0.78 + 4.5/0.70) × $16,000</td></tr>
+      <tr><td>Demurrage <span class="pill p-n">0.0 d</span></td><td class="r">0.00</td><td class="r">0.00</td><td class="r">0.0%</td><td>10.2 d port time &lt; 10 d allowed</td></tr>
+      <tr><td>Weather disruption <span class="pill p-a">1.0 d</span></td><td class="r">15,360.00</td><td class="r">30,720.00</td><td class="r">1.0%</td><td>(0.12 + 0.20) × 3 d × $16,000</td></tr>
+      <tr><td>Canal fees</td><td class="r">0.00</td><td class="r">0.00</td><td class="r">0.0%</td><td>Lane has no canal transit</td></tr>
+      <tr><td>Insurance</td><td class="r">14,400.00</td><td class="r">28,800.00</td><td class="r">1.0%</td><td>0.2% × $120 × 120,000</td></tr>
+      <tr><td><b>Bunker</b> <span class="pill p-b">444 t</span></td><td class="r">257,520.00</td><td class="r">515,040.00</td><td class="r"><b>17.1%</b></td><td>37 t/day × 12 d × $580</td></tr>
+      <tr style="border-top:2px solid var(--navy);background:#eef4fa"><td><b>TOTAL</b></td><td class="r"><b>1,504,188.42</b></td><td class="r"><b>3,008,376.84</b></td><td class="r"><b>100%</b></td><td><b>$25.07 / tonne delivered</b></td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">Freight is 53.5% of delivered cost — <b>46.5% of the money is invisible in the broker's
+  quote.</b> The two largest hidden lines are bunker (17.1%) and waiting time (12.3%). Together they are $884,857,
+  or $7.37/tonne, on a voyage whose freight line is $13.40/tonne. This is the single strongest quantitative
+  argument for the platform: optimising on freight alone optimises barely half the decision.</p>
+
+  <h3>7.4 Sensitivity — cost per tonne against vessel size</h3>
+  <p>Same lane, same rate, same month; only the parcel and hull change. This is the comparison
+  <code>compare_vessel_options()</code> surfaces on the Cost Analysis tab.</p>
+  <table class="tight">
+    <thead><tr><th>Parcel</th><th>Hull</th><th class="r">Total USD</th><th class="r">$/tonne</th><th class="r">vs. Capesize</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>33,000 t</td><td>Handysize</td><td class="r">887,205</td><td class="r">26.88</td><td class="r"><span class="pill p-r">+27.4%</span></td><td>Highest $/dwt — bunker and waiting are near-fixed, so a small parcel amortises them badly.</td></tr>
+      <tr><td>58,000 t</td><td>Supramax</td><td class="r">1,383,038</td><td class="r">23.85</td><td class="r"><span class="pill p-a">+13.0%</span></td><td>Better amortisation, but 2 voyages needed for the 120 kt contract.</td></tr>
+      <tr><td>75,000 t</td><td>Panamax</td><td class="r">1,739,352</td><td class="r">23.19</td><td class="r"><span class="pill p-a">+9.9%</span></td><td>The largest hull permitted by Newcastle (LOA 250 m, beam 38 m).</td></tr>
+      <tr><td>180,000 t</td><td>Capesize</td><td class="r">3,797,369</td><td class="r"><b>21.10</b></td><td class="r">—</td><td>Best $/t, <b>but physically excluded</b> by Newcastle's LOA and beam limits.</td></tr>
+    </tbody>
+  </table>
+  <div class="box info">
+    <span class="bt">The economics and the physics disagree — by design</span>
+    <p>The cheapest vessel per tonne on this lane is the Capesize, and it is <b>not an option</b>. The optimizer
+    returns the Panamax at $25.07/t, 18.8% above the unconstrained optimum. This is the correct behaviour of a
+    constraint-first system and it quantifies, in dollars, exactly what Newcastle's berth geometry costs SAIL on
+    Australian coal. Presenting the Capesize number as "the alternative" would be a modelling error; the platform
+    only ever shows hulls that passed the gates.</p>
+  </div>
+
+  <h3>7.5 Known weaknesses in the cost model</h3>
+  <ul>
+    <li><b>Waiting cost is charged on both ports for the full voyage.</b> It is an expected-value line, not a
+    schedule simulation, and it treats a load-side wait and a discharge-side wait identically. At 12.3% of total it
+    deserves a proper queueing or agent-based treatment before production use.</li>
+    <li><b>Demurrage is a deterministic threshold</b>, not a distribution. Real demurrage is a function of
+    berth-window variance, which the waiting model already hints at but does not couple.</li>
+    <li><b>Insurance is a flat 0.2%</b> with no war-risk, sanctions or lay-up loading.</li>
+    <li><b>No cargo-handling cost</b> (stevedoring, tally, shunting) — usually borne by the charterer and often
+    larger than insurance.</li>
+    <li><b>No ballast or repositioning cost</b>, which matters directly for the idle-management question in §9.6.</li>
+    <li><b>No time-value treatment inside the voyage</b>; everything is undiscounted and evaluated at fixture date.</li>
+  </ul>
+</div>
+
+<!-- ================= 8. LIGHTERING ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">8.</span> Module 4 — Lightering Optimizer</h2>
+  <p class="lede">Ship-to-ship cargo transfer solved from the vessel's TPC curve, in
+  <code>backend/models/lightering.py</code>.</p>
+
+  <h3>8.1 The naval-architecture problem</h3>
+  <p>A loaded ship draws more water than an empty one. If her loaded draft exceeds the discharge berth's charted
+  depth, she must transfer cargo into a lighter <i>at anchor</i> until she draws less. The quantity to transfer is
+  not proportional to the draft excess, because the ship becomes more buoyant-per-centimetre as she rises toward
+  the waterline. That non-linearity is exactly what the TPC curve encodes.</p>
+  <div class="box info">
+    <span class="bt">TPC — Tonnes Per Centimetre</span>
+    <p>The immersion (weight) required to sink a vessel one further centimetre, as a function of her current draft.
+    It is the first derivative of displacement with respect to draft — the discrete form of the waterplane area
+    <i>A</i>(<i>d</i>). Because <i>A</i>(<i>d</i>) widens as a hull approaches its parallel middle body, TPC rises
+    with draft. In this dataset TPC rises about 20% from light to fully loaded on every hull — which is exactly
+    why a linear draft-to-tonnage conversion would under-transfer.</p>
+  </div>
+
+  <h3>8.2 The integration</h3>
+  <div class="eq">
+    <span class="lbl">EQ 8.1</span>
+    <i>d</i><sub>target</sub> = <i>d</i><sub>port</sub> − <i>m</i><sub>UKC</sub> &nbsp;&nbsp;<span style="font-family:Inter;font-size:8pt;color:#6b7f96">← 0.5 m under-keel clearance by default</span><br/><br/>
+    <b>W</b> = <i>∫</i><sub><i>d</i><sub>target</sub></sub><sup><i>d</i><sub>loaded</sub></sup> TPC(<i>d</i>) d<i>d</i> · 100
+  </div>
+  <p>The ×100 converts metres to centimetres. The integral is evaluated as a <b>left-endpoint Riemann sum at 1 cm
+  resolution</b>:</p>
+  <div class="eq">
+    <span class="lbl">EQ 8.2</span>
+    <i>W</i> = Σ<sub><i>k</i>=0 … <i>n</i>−1</sub> TPC(<i>d</i><sub>target</sub> + <i>k</i>/100) &nbsp;,&nbsp;&nbsp; <i>n</i> = ⌊100·(<i>d</i><sub>loaded</sub> − <i>d</i><sub>target</sub>)⌋
+  </div>
+  <p class="tbl-note">At 1 cm resolution the discretisation error against a true integral of a piecewise-linear
+  TPC curve is bounded by the TPC slope over one step — under 0.1 t on these hulls. The code additionally reports
+  <code>avg_tpc</code> = <i>W</i>/<i>n</i>, which is the quantity a naval architect would sanity-check first, and
+  returns the first 10 TPC samples as a <code>tpc_profile</code> for plotting.</p>
+
+  <h4>8.2.1 Worked example 1 — 60,000 t Panamax Standard into Haldia (July)</h4>
+  <table class="tight">
+    <tbody>
+      <tr><td style="width:52mm">Estimated loaded draft</td><td class="r">13.20 m &nbsp;<span style="color:#6b7f96">(8.0 + 6.5 × 0.800)</span></td></tr>
+      <tr><td>Haldia charted draft</td><td class="r">10.50 m</td></tr>
+      <tr><td>Target draft (10.5 − 0.5 UKC)</td><td class="r">10.00 m</td></tr>
+      <tr><td>Draft excess</td><td class="r">3.20 m &nbsp;=&nbsp; <b>319 cm</b></td></tr>
+      <tr><td>Average TPC over range</td><td class="r">58.5 t/cm &nbsp;<span style="color:#6b7f96">(52.0 → 62.8 t/cm on the curve)</span></td></tr>
+      <tr style="background:#eef4fa"><td><b>Cargo to lighter</b></td><td class="r"><b>18,655 t</b> &nbsp;=&nbsp; 31% of the parcel</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.3 Lightering cost model</h3>
+  <div class="eq">
+    <span class="lbl">EQ 8.3</span>
+    C<sub>lig</sub> = <i>W</i>·<i>ρ<sub>f</sub></i>·<i>d<sub>op</sub></i> &nbsp;+&nbsp; <i>C<sub>fix</sub></i> &nbsp;+&nbsp; <i>W</i>·<i>λ</i>·<i>v</i> &nbsp;+&nbsp; <i>W</i>·<i>v</i>·0.001
+  </div>
+  <table class="tight">
+    <thead><tr><th style="width:38mm">Term</th><th class="width:26mm" class="r">Default</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>Feeder vessel hire</td><td class="r">$12,000/day × 2 d</td><td>Charter of the receiving lighter. A fixed cost regardless of tonnage moved.</td></tr>
+      <tr><td>STS fixed cost</td><td class="r">$50,000</td><td>Tugs, fenders, mooring masters, gangway, transfer hoses, permits.</td></tr>
+      <tr><td>Cargo loss exposure</td><td class="r">0.2% of value</td><td>Spillage, heel, contamination. Industry range 0.1–0.3%.</td></tr>
+      <tr><td>Additional STS insurance</td><td class="r">0.1% of value</td><td>Eleved-risk cover for transfer operations.</td></tr>
+    </tbody>
+  </table>
+  <p>Worked example 1 continued: <code>24,000 + 50,000 + 4,477 + 2,239 = <b>$80,716</b></code>, i.e. $4.33 per
+  tonne transferred. The structure matters more than the total — the two fixed terms are 92% of the cost, so
+  <b>STS is a step function, not a linear one</b>. A marginally infeasible parcel can often be solved by shaving a
+  few hundred tonnes off the load rather than paying for a transfer. That insight is only visible because the cost
+  is decomposed.</p>
+
+  <h3>8.4 Weather gating — the hard veto</h3>
+  <p>STS transfer is suspended when significant wave height exceeds <b>Hs &gt; 1.5 m</b>, the OCIMF working
+  threshold. The module converts each port's monthly delay probability into an operational risk class:</p>
+  <table class="tight">
+    <thead><tr><th class="r" style="width:34mm">Weather delay prob.</th><th style="width:22mm">Risk level</th><th>Operational guidance</th></tr></thead>
+    <tbody>
+      <tr><td class="r">&lt; 0.08</td><td><span class="pill p-g">LOW</span></td><td>Favourable window; STS can proceed.</td></tr>
+      <tr><td class="r">0.08 – 0.15</td><td><span class="pill p-a">MODERATE</span></td><td>Plan for 1–2 day delays.</td></tr>
+      <tr><td class="r">0.15 – 0.22</td><td><span class="pill p-v">HIGH</span></td><td>Consider alternative timing or direct berthing.</td></tr>
+      <tr><td class="r">≥ 0.22</td><td><span class="pill p-r">VERY HIGH</span></td><td>Monsoon/storm season — <b>STS highly risky</b>; strongly recommend an alternative approach.</td></tr>
+    </tbody>
+  </table>
+  <p>Window availability is estimated as <code>30 − (p·30/3)·3 = 30 − 30p</code> usable days per month, with a
+  3-day assumed mean event duration. Haldia in July gives p = 0.28 → 21.6 available days and 2.8 expected events.</p>
+  <div class="box crit">
+    <span class="bt">The veto is absolute</span>
+    <p>When risk class is <code>VERY HIGH</code> the module <b>overrides the economic comparison entirely</b> and
+    forces <code>REDUCE_CARGO</code>, regardless of how much cheaper STS happens to be. In worked example 1 the
+    economics favoured lightering by $12,559 (STS $80,716 vs. $93,275 of forgone cargo), but the July monsoon veto
+    reversed the verdict. This is the right precedence — weather safety outranks $12.5k — and it is the clearest
+    example in the system of a non-financial constraint correctly dominating an economic one.</p>
+  </div>
+
+  <h3>8.5 Worked example 2 — 150,000 t Capesize into Gopalpur (June)</h3>
+  <table class="tight">
+    <tbody>
+      <tr><td style="width:52mm">Loaded draft → target (13.0 − 0.5)</td><td class="r">16.83 m → 12.50 m (excess 4.33 m, 433 cm)</td></tr>
+      <tr><td>Average TPC</td><td class="r">87.1 t/cm</td></tr>
+      <tr style="background:#eef4fa"><td><b>Cargo to lighter</b></td><td class="r"><b>37,723 t</b> &nbsp;=&nbsp; 25% of the parcel</td></tr>
+      <tr><td>Lightering cost</td><td class="r">$87,580 &nbsp;·&nbsp; foregone cargo at $5/t = <b>$188,615</b></td></tr>
+      <tr><td>Verdict</td><td class="r"><span class="pill p-b">LIGHTER</span> &nbsp;“Lightering is $101,035 cheaper than reducing cargo.”</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">At 433 cm of draft reduction the fixed STS costs amortise over far more tonnage, so the
+  economics flip decisively in favour of transferring. The decision boundary is therefore a function of
+  <i>draft excess</i>, not of the port — which is the correct behaviour and emerges from the cost structure rather
+  than being hard-coded.</p>
+
+  <h3>8.6 When the lightering module actually fires</h3>
+  <p>An exhaustive sweep of all 35 lanes × 2 materials × 8 parcel sizes (560 feasible combinations) through the
+  real optimizer → lightering chain gives:</p>
+  <table class="tight">
+    <thead><tr><th>Discharge port</th><th class="r" style="width:24mm">Charted draft</th><th class="r" style="width:28mm">Lightering triggered</th><th>Explanation</th></tr></thead>
+    <tbody>
+      <tr><td><b>Gopalpur</b></td><td class="r">13.0 m</td><td class="r"><b>40 / 80</b></td><td>The optimizer permits drafts up to 13.0 m; the 0.5 m UKC margin then forces a small transfer of ~1,570 t on Panamax loads.</td></tr>
+      <tr><td><b>Haldia</b></td><td class="r">10.5 m</td><td class="r"><b>20 / 80</b></td><td>Same mechanism at a shallower berth; the optimizer has already shrunk the hull to Handysize, so the residual excess is small.</td></tr>
+      <tr><td>Sagar-Sandheads</td><td class="r">11.5 m</td><td class="r">0 / 80</td><td>Shallow, but the Handysize it forces draws ~10.0 m, inside the 11.0 m target.</td></tr>
+      <tr><td>Paradip · Vizag · Gangavaram · Dhamra</td><td class="r">17.1 – 18.5 m</td><td class="r">0 / 320</td><td>Deep enough that no load in the feasible set comes near the limit.</td></tr>
+      <tr style="border-top:2px solid var(--navy);background:#eef4fa"><td><b>Total</b></td><td class="r">—</td><td class="r"><b>60 / 560 &nbsp;(10.7%)</b></td><td>Concentrated entirely at the two shallowest berths.</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">This is a good result to be able to state precisely: the module is not dead code, and it is
+  not firing spuriously. It fires exactly where physics says it must — at shallow discharge berths — and the
+  trigger condition is the under-keel-clearance margin, not a stub.</p>
+</div>
+
+<!-- ================= 9. DECISION ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">9.</span> Module 5 — Charter vs Spot Decision Engine</h2>
+  <p class="lede">NPV comparison, analytic breakeven, and 1,000-path Monte Carlo with Value-at-Risk, in
+  <code>backend/models/decision_engine.py</code>.</p>
+
+  <h3>9.1 NPV of the two cash-flow streams</h3>
+  <div class="eq">
+    <span class="lbl">EQ 9.1</span>
+    NPV(<i>X</i>) = Σ<sub><i>t</i>=1</sub><sup><i>T</i></sup> CF<sub><i>t</i></sub> / (1 + <i>r</i>/<i>m</i>)<sup><i>t</i></sup>
+  </div>
+  <div class="eqvar">
+    <div><b>CF<sub><i>t</i></sub></b> = cost paid in period <i>t</i></div>
+    <div><b><i>r</i></b> = 8% p.a. default discount rate</div>
+    <div><b><i>m</i></b> = 12 periods/year (monthly)</div>
+    <div><b><i>T</i></b> = contract months (1–24)</div>
+    <div><b>Charter CF</b> = <i>R</i>·<i>Q</i>, constant</div>
+    <div><b>Spot CF</b> = <i>S<sub><i>t</i></sub></i>·<i>Q</i>, <i>S<sub><i>t</i></sub></i> = forecast</div>
+  </div>
+  <p>Daily forecasts are aggregated into contract months in 30-day blocks, averaging both the point forecast and
+  the two CI bounds. If <code>contract_months</code> exceeds the 90-day forecast horizon, remaining months are
+  extrapolated flat from the last value with the band widened 15% per extra month.</p>
+
+  <h3>9.2 Breakeven charter rate — closed form</h3>
+  <p>Setting the two NPVs equal and cancelling the parcel size <i>Q</i>, which appears on both sides:</p>
+  <div class="eq">
+    <span class="lbl">EQ 9.2</span>
+    Σ <i>R</i>·<i>Q</i>/(1+<i>r</i>)<sup><i>t</i></sup> = Σ <i>S<sub><i>t</i></sub></i>·<i>Q</i>/(1+<i>r</i>)<sup><i>t</i></sup><br/>
+    ⇒ <b><i>R</i><sup>*</sup> = Σ (<i>S<sub><i>t</i></sub>/(1+<i>r</i>)<sup><i>t</i></sup>) ÷ Σ (1/(1+<i>r</i>)<sup><i>t</i></sup>)</b>
+  </div>
+  <p>So the breakeven rate is the <b>discount-factor-weighted average</b> of the forecast spot rates. Its practical
+  value to the desk is that it is a negotiating number: <i>"we will not sign above $13.36/t"</i>, derived from the
+  model rather than asserted.</p>
+  <p>If the user supplies no proposed rate, the engine defaults to <code>0.95 × R*</code> — a deliberately
+  charter-favourable stance, on the reasoning that a recommendation engine should model the case for the decision
+  it is being asked to evaluate rather than assume a null result.</p>
+
+  <h3>9.3 Monte Carlo design</h3>
+  <table class="tight">
+    <thead><tr><th style="width:9mm">Step</th><th style="width:52mm">Operation</th><th>Detail and rationale</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Derive per-period σ from the 95% band</td><td><code>σ<sub><i>t</i></sub> = (U<sub>95</sub> − L<sub>95</sub>)/3.92</code>, floored at <code>0.01·mean</code>. The 3.92 divisor is the two-sided 95% normal quantile (1.96 × 2), so the 95% interval is reinterpreted as ±1.96σ. The 1% floor prevents a degenerate zero-variance month.</td></tr>
+      <tr><td>2</td><td>Sample 1,000 independent paths</td><td>Each path draws <i>T</i> independent normals. <b>No path dependence</b> — periods are not correlated across time. This understates true serial correlation and is logged in §14.3.</td></tr>
+      <tr><td>3</td><td>Clip extremes</td><td>Rate bounded to <code>[0.3·mean, 2.5·mean]</code>. Prevents a single Gaussian tail from producing a negative or absurd freight rate.</td></tr>
+      <tr><td>4</td><td>Compute the savings distribution</td><td><code>savings = NPV(spot path) − NPV(charter)</code>. Positive ⇒ charter is cheaper.</td></tr>
+      <tr><td>5</td><td>Probability of charter winning</td><td><code>P = mean(savings &gt; 0)</code> — the empirical CDF at zero. No distributional assumption needed beyond the per-period normal.</td></tr>
+      <tr><td>6</td><td>Value at Risk, 95%</td><td><code>VaR<sub>95</sub> = percentile(savings, 5)</code>. Negative ⇒ in the worst 5% of outcomes, locking the charter rate <i>loses</i> money.</td></tr>
+      <tr><td>7</td><td>Maximum potential loss</td><td><code>min(savings)</code> — the absolute worst simulated path.</td></tr>
+      <tr><td>8</td><td>Histogram for the UI</td><td>30 bins over total spot cost, rendered as the Monte Carlo distribution chart.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.4 Decision rule</h3>
+  <table>
+    <thead><tr><th class="r" style="width:38mm">P(charter cheaper)</th><th style="width:26mm">Verdict</th><th style="width:26mm">Confidence</th><th>Action implied</th></tr></thead>
+    <tbody>
+      <tr><td class="r">≥ 0.85</td><td><span class="pill p-g">CHARTER</span></td><td>HIGH</td><td>Sign. Lock the rate.</td></tr>
+      <tr><td class="r">0.70 – 0.85</td><td><span class="pill p-g">CHARTER</span></td><td>MODERATE</td><td>Sign, but leave a review clause.</td></tr>
+      <tr><td class="r">0.45 – 0.70</td><td><span class="pill p-n">NEUTRAL</span></td><td>LOW</td><td>No edge. Negotiate below breakeven or wait for clarity.</td></tr>
+      <tr><td class="r">0.25 – 0.45</td><td><span class="pill p-a">SPOT</span></td><td>MODERATE</td><td>Stay flexible.</td></tr>
+      <tr><td class="r">≤ 0.25</td><td><span class="pill p-r">SPOT</span></td><td>HIGH</td><td>Do not charter at this rate.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.5 Verified worked example — AUS_PAR, 60,000 t/voyage, 6 months</h3>
+  <table>
+    <thead><tr><th style="width:52mm">Quantity</th><th class="r" style="width:36mm">Value</th><th>Reading</th></tr></thead>
+    <tbody>
+      <tr><td>Breakeven charter rate <i>R</i><sup>*</sup></td><td class="r"><b>$13.36 / t</b></td><td>Discount-weighted mean of the monthly forecast.</td></tr>
+      <tr><td>Proposed rate (auto = 0.95 R*)</td><td class="r">$12.69 / t</td><td>5% inside breakeven — the charter-favourable default.</td></tr>
+      <tr><td>Charter NPV</td><td class="r">$4,464,488</td><td>6 × $12.69 × 60,000, discounted monthly.</td></tr>
+      <tr><td>Spot NPV (mean of 1,000 paths)</td><td class="r">$4,699,965</td><td>± $152,070 (1σ).</td></tr>
+      <tr style="background:#eef4fa"><td><b>NPV advantage of charter</b></td><td class="r"><b>$235,478</b></td><td>Spot NPV − charter NPV.</td></tr>
+      <tr><td>P(charter cheaper)</td><td class="r"><b>93.3%</b></td><td>→ <span class="pill p-g">CHARTER · HIGH</span></td></tr>
+      <tr><td>Expected savings</td><td class="r">$235,478</td><td>Mean of the savings distribution.</td></tr>
+      <tr><td><b>VaR 95%</b></td><td class="r"><b>−$27,058</b></td><td>In the worst 5% of paths, the charter costs $27k more than spot.</td></tr>
+      <tr><td>Maximum potential loss</td><td class="r">−$368,654</td><td>Worst single simulated path.</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">The Monte Carlo distribution is tight: charter total $4.57M against a spot mean of $4.81M with
+  a 1σ spread of ~$0.15M. The tail is thin, which is why VaR is only −$27k even though the worst observed path is
+  −$369k. Note the asymmetry — expected savings are 8.7× the VaR. That ratio, not the point estimate, is the
+  number a risk committee should be shown.</p>
+
+  <div class="box crit">
+    <span class="bt">A structural artefact in the current verdict</span>
+    <p>The 93.3% probability of charter winning is <b>not</b> a market insight. It is close to the arithmetic
+    consequence of three design choices interacting: (i) the auto-proposed rate is set 5% <i>below</i> breakeven;
+    (ii) the forecast path is nearly flat (all six monthly rates = $13.36), so the simulated distribution is
+    tight around a known number; (iii) σ is derived from the 95% band, which the √<i>h</i> widening keeps
+    moderate. A flat forecast plus a rate 5% below its own mean will win roughly 90–95% of the time almost
+    regardless of the market. The verdict is <i>arithmetically correct given the inputs</i> and should be reported
+    as such. On a real, volatile rate series the probability would be materially lower and far more informative.
+    Logged as §14.3.</p>
+  </div>
+
+  <h3>9.6 Operational insights — timing and idle management</h3>
+  <p>Beyond the charter/spot binary, the engine derives two operational signals directly from the forecast. These
+  address the idle-time question in the problem statement.</p>
+  <h4>9.6.1 Market entry timing</h4>
+  <p>A 7-day rolling mean is computed across the whole forecast; its 25th and 75th percentiles become the low and
+  high thresholds. The current 7-day mean is then classified:</p>
+  <table class="tight">
+    <thead><tr><th style="width:44mm">Condition</th><th style="width:36mm">Signal</th><th>Guidance emitted</th></tr></thead>
+    <tbody>
+      <tr><td>current ≤ Q<sub>25</sub></td><td><span class="pill p-g">FAVORABLE_WINDOW</span></td><td>"Review short-term charter offers now."</td></tr>
+      <tr><td>current ≥ Q<sub>75</sub></td><td><span class="pill p-a">WAIT_FOR_WINDOW</span></td><td>"For flexible cargo, monitor for a lower-rate window."</td></tr>
+      <tr><td>otherwise</td><td><span class="pill p-n">MONITOR</span></td><td>"Compare charter quotes with the rolling forecast before fixing."</td></tr>
+    </tbody>
+  </table>
+  <p>The module also reports the <b>best 7-day window</b> — the position of the rolling-mean minimum and its
+  average rate — so the desk receives an actionable date range rather than a general caution.</p>
+
+  <h4>9.6.2 Idle-scenario management</h4>
+  <p>Contiguous runs of the rolling mean at or below Q<sub>25</sub> are extracted as <b>low-demand windows</b>, the
+  three cheapest retained. A low rate is used as a proxy for softer freight demand — reasonable in a market where
+  weak rates and thin cargo coexist, though it is a proxy and not an observed cargo-volume signal.</p>
+  <p>The emitted strategy has three concrete parts: <b>(a)</b> avoid unnecessary ballast repositioning during soft
+  windows; <b>(b)</b> keep the vessel near the relevant loading region where commercially practical; <b>(c)</b>
+  evaluate an alternate employment on another modelled East Coast lane before committing to a long idle spell.
+  Part (c) is the one that requires data the platform does not yet have — see §14.5.</p>
+</div>
+
+<!-- ================= 10. RISK ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">10.</span> Module 6 — Risk Summary</h2>
+  <p class="lede">A weighted composite of three risk dimensions, in
+  <code>backend/main.py :: _calculate_risk_summary()</code>. This is the only module with no dedicated file.</p>
+
+  <h3>10.1 The three dimensions and their scaling</h3>
+  <table>
+    <thead><tr><th style="width:28mm">Dimension</th><th style="width:56mm">Scaling to 0–100</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td><b>Weather risk</b></td><td><code>min(100, p<sub>wx</sub> · 500)</code></td><td>Discharge-port weather-delay probability for the loading month, via the lightering module. A 0.20 probability saturates the scale.</td></tr>
+      <tr><td><b>Port congestion</b></td><td><code>min(100, W · 10)</code></td><td>Total expected waiting days from the cost engine. 10 days saturates.</td></tr>
+      <tr><td><b>Rate volatility</b></td><td><code>min(100, (W̄<sub>95</sub>/r̄) · 100 · 2)</code></td><td>Mean 95% band width ÷ mean rate, over the first 30 forecast days. A 50% relative band saturates.</td></tr>
+    </tbody>
+  </table>
+  <div class="eq">
+    <span class="lbl">EQ 10.1</span>
+    <i>S</i><sub>overall</sub> = ⌊ 0.35·<i>S</i><sub>wx</sub> + 0.25·<i>S</i><sub>cong</sub> + 0.40·<i>S</i><sub>vol</sub> ⌋
+  </div>
+  <p>Rates carry the highest weight (0.40) because rate risk is the one a charter decision actually transfers to
+  the counterparty; weather (0.35) is next because it gates both cost and STS feasibility; congestion (0.25) is
+  lowest as it is largely within the operator's own scheduling control.</p>
+  <p><b>Classification:</b> &lt; 30 <span class="pill p-g">LOW</span> · 30–54
+  <span class="pill p-a">MODERATE</span> · 55–74 <span class="pill p-v">HIGH</span> · ≥ 75
+  <span class="pill p-r">VERY HIGH</span></p>
+
+  <h3>10.2 Verified output — AUS_PAR, June</h3>
+  <table class="tight">
+    <thead><tr><th>Dimension</th><th class="r" style="width:20mm">Score</th><th style="width:34mm">Bar</th><th>Derivation</th></tr></thead>
+    <tbody>
+      <tr><td>Rate volatility</td><td class="r">25</td><td><span class="bar g"><i style="width:25%"></i></span></td><td>Day-30 95% band $12.09–$14.63 (width $2.54) on a $13.36 rate → 19.0% → ×2 = 38, averaged over 30 days ≈ 25.</td></tr>
+      <tr><td>Weather risk</td><td class="r">50</td><td><span class="bar a"><i style="width:50%"></i></span></td><td>Default 50. Not overwritten, because with no lightering required the module returns <code>weather_risk: null</code>. See §14.2.</td></tr>
+      <tr><td><b>Overall</b></td><td class="r"><b>52</b></td><td><span class="bar a"><i style="width:52%"></i></span></td><td>⌊0.35·50 + 0.25·100 + 0.40·25⌋ = ⌊52.5⌋ = 52 → <span class="pill p-a">MODERATE</span></td></tr>
+      <tr><td>Port congestion</td><td class="r">100</td><td><span class="bar r"><i style="width:100%"></i></span></td><td>11.6 expected waiting days × 10 → saturated at 100. <b>The binding risk on this lane is berth congestion, not the market.</b></td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note">The 100/100 congestion score is a genuine and actionable finding: on Newcastle→Paradip the
+  model says the dominant risk is 11.6 days of berth waiting, worth $7.37/tonne, and that neither the rate forecast
+  nor the weather matters nearly as much. That is precisely the kind of insight a freight-quote-only process cannot
+  surface, and it is a good illustration of the platform earning its place.</p>
+</div>
+
+<!-- ================= 11. API ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">11.</span> API Layer</h2>
+  <p class="lede">Ten endpoints on FastAPI, all defined in <code>backend/main.py</code>.</p>
+
+  <h3>11.1 Endpoint inventory</h3>
+  <table>
+    <thead><tr><th style="width:52mm">Method &amp; path</th><th style="width:34mm">Request model</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET /api/health</code></td><td>—</td><td>Status, UTC timestamp, and <code>data_generated</code> — the flag the frontend polls to distinguish "Engine Ready" from "Generate Data First".</td></tr>
+      <tr><td><code>GET /api/routes</code></td><td>—</td><td>All 35 lane records. Drives the origin/destination dropdowns.</td></tr>
+      <tr><td><code>GET /api/vessels</code></td><td>—</td><td>All 7 hull records including TPC curves.</td></tr>
+      <tr><td><code>GET /api/ports</code></td><td>—</td><td>All 33 port records including 12-month weather maps.</td></tr>
+      <tr><td><code>POST /api/recommend-vessel</code></td><td><code>VesselRecommendationRequest</code></td><td>Vessel optimizer only. Returns status, recommended, alternatives, and the full rejection list.</td></tr>
+      <tr><td><code>POST /api/predict-rates</code></td><td><code>ForecastRequest</code></td><td>90-day forecast with 80%/95% bands, 90-day history, training metrics.</td></tr>
+      <tr><td><code>POST /api/calculate-cost</code></td><td><code>CostRequest</code></td><td>Single-voyage delivered cost. Vessel chosen by the caller.</td></tr>
+      <tr><td><code>POST /api/lightering-analysis</code></td><td><code>LighteringRequest</code></td><td>TPC integration, STS cost, weather risk, recommendation.</td></tr>
+      <tr><td><code>POST /api/charter-decision</code></td><td><code>CharterDecisionRequest</code></td><td>NPV + breakeven + Monte Carlo + operational insights.</td></tr>
+      <tr><td><code>POST /api/full-analysis</code></td><td><code>FullAnalysisRequest</code></td><td><b>Primary endpoint.</b> All six modules, orchestrated, in one response.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>11.2 Pydantic request schemas and validation</h3>
+  <p>Validation happens at the boundary, so an out-of-range request never reaches a model. Constraints are
+  declarative rather than hand-written checks.</p>
+  <table class="tight">
+    <thead><tr><th style="width:36mm">Schema</th><th>Fields with constraints</th></tr></thead>
+    <tbody>
+      <tr><td><code>ForecastRequest</code></td><td><code>route_code: str</code> (required) · <code>horizon_days: int = 30, ge=1, le=90</code></td></tr>
+      <tr><td><code>CostRequest</code></td><td><code>cargo_quantity_tonnes: float, gt=0</code> · <code>route_code: str</code> · <code>vessel_class: str</code> · <code>freight_rate: float, gt=0</code> · <code>loading_date_month: int, 1–12</code> · <code>cargo_value_per_tonne: float, gt=0</code> · <code>bunker_price_per_tonne: float, gt=0</code> · <code>vessel_subtype: str = "Standard"</code></td></tr>
+      <tr><td><code>LighteringRequest</code></td><td><code>cargo_quantity_tonnes: float, gt=0</code> · <code>vessel_class: str</code> · <code>port_name: str</code> · <code>month: int, 1–12</code> · <code>cargo_value_per_tonne: float, gt=0</code> · <code>vessel_subtype: str</code></td></tr>
+      <tr><td><code>CharterDecisionRequest</code></td><td><code>route_code: str</code> · <code>cargo_quantity_tonnes: float, gt=0</code> · <code>contract_months: int = 6, ge=1, le=24</code> · <code>proposed_charter_rate: Optional[float]</code> · <code>discount_rate: float = 0.08, gt=0, lt=1</code></td></tr>
+      <tr><td><code>FullAnalysisRequest</code></td><td><code>cargo_quantity_tonnes: float, gt=0</code> · <code>cargo_material: str = "Coal"</code> · <code>route_code: str</code> · <code>contract_months: int, 1–24</code> · <code>loading_date_month: int, 1–12</code> · <code>cargo_value_per_tonne: float, gt=0</code> · <code>bunker_price_per_tonne: float, gt=0</code> · <code>proposed_charter_rate: Optional[float]</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>11.3 The <code>full-analysis</code> response contract</h3>
+  <p>Seven top-level keys. Verified present and populated for the reference parcel:</p>
+  <table class="tight">
+    <thead><tr><th style="width:44mm">Key</th><th style="width:24mm">Type</th><th>Contents</th></tr></thead>
+    <tbody>
+      <tr><td><code>vessel_recommendation</code></td><td>object</td><td>status, route, port_constraints (both ends), recommended, alternatives[4], rejected[], explanation</td></tr>
+      <tr><td><code>forecast</code></td><td>object</td><td>forecasts[90], ci_80{lower,upper}, ci_95{lower,upper}, historical_rates[90], training_metrics, model_info</td></tr>
+      <tr><td><code>cost_analysis</code></td><td>object</td><td>total_cost_usd, cost_per_tonne_usd, breakdown{8 components}, route_info, vessel_info, voyage_plan (when split)</td></tr>
+      <tr><td><code>vessel_comparison</code></td><td>object</td><td>options[] priced for feasible hulls only, recommended, selection_basis</td></tr>
+      <tr><td><code>lightering</code></td><td>object</td><td>vessel, port, lightering_calculation, lightering_cost, direct_berthing_cost, weather_risk, recommendation, reason</td></tr>
+      <tr><td><code>charter_decision</code></td><td>object</td><td>decision, confidence, reasoning, breakeven_rate, npv_comparison, monte_carlo{+histogram}, monthly_forecast, risk_metrics, operational_insights</td></tr>
+      <tr><td><code>risk_summary</code></td><td>object</td><td>overall_score, overall_level, overall_color, dimensions{weather, congestion, volatility}</td></tr>
+      <tr><td><code>warnings</code></td><td>array</td><td><b>Absent when empty.</b> Populated with one message per module that raised; the request still returns 200.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>11.4 Cross-origin and error handling</h3>
+  <div class="grid2">
+    <div class="card"><div class="ch">CORS</div>
+      <p>Explicit allow-list of <code>localhost:5173</code>, <code>localhost:3000</code> and
+      <code>127.0.0.1:5173</code> with credentials enabled, all methods, all headers. In development the Vite
+      proxy (<code>/api</code> → <code>:8000</code>) makes CORS moot; it matters for a deployed build.</p></div>
+    <div class="card"><div class="ch">Error taxonomy</div>
+      <p><code>ValueError</code> → <b>400</b> with the message (e.g. <i>"Route not found: XXX"</i>).
+      <code>FileNotFoundError</code> → <b>400</b> with the instruction to run the generator.
+      Any other exception → <b>500</b> with the message; the top-level handler also appends a full traceback.
+      Inside <code>full_analysis</code> a module failure degrades that section to <code>null</code> and records a
+      warning rather than aborting.</p></div>
+  </div>
+  <p class="tbl-note">Measured latency: <b>6.55 s</b> for the first request on a cold lane (XGBoost ×5, LightGBM
+  and 50 LSTM epochs all train inside the call) and <b>0.10 s</b> for every subsequent request on the same lane.
+  The frontend Axios timeout is set to 120 s to cover the cold case.</p>
+</div>
+
+<!-- ================= 12. FRONTEND ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">12.</span> Frontend Dashboard</h2>
+  <p class="lede">React 18 single-page dashboard — one form, one button, four result tabs.</p>
+
+  <h3>12.1 Components</h3>
+  <table>
+    <thead><tr><th style="width:46mm">Component</th><th style="width:14mm" class="c">Lines</th><th>Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td class="path">App.jsx</td><td class="c">101</td><td>Header, trade-lane counter, live backend status pill, offline and no-data banners, footer.</td></tr>
+      <tr><td class="path">api.js</td><td class="c">33</td><td>Axios instance, <code>/api</code> base, 120 s timeout, response interceptor that unwraps FastAPI's <code>detail</code> field into a readable <code>Error</code>.</td></tr>
+      <tr><td class="path">Dashboard.jsx</td><td class="c">333</td><td>The 8-field input form, dependent origin→destination cascade, route-code resolution, submit orchestration, tab state, and the warning banner.</td></tr>
+      <tr><td class="path">VesselRecommendation.jsx</td><td class="c">80</td><td>Selected hull banner with explanation, multi-voyage notice, and — notably — the <b>full rejection list with per-hull reasons</b>.</td></tr>
+      <tr><td class="path">RiskIndicators.jsx</td><td class="c">71</td><td>Overall risk chip plus three labelled progress bars, colour-coded green → yellow → orange → red.</td></tr>
+      <tr><td class="path">ForecastChart.jsx</td><td class="c">215</td><td>Composed chart: 60 days history as a solid line, forecast as a dashed line, 80% and 95% bands as stacked <code>Area</code> fills. Four KPI cards and a model-details strip.</td></tr>
+      <tr><td class="path">CostBreakdown.jsx</td><td class="c">183</td><td>Four KPI cards, an 8-slice donut, a detailed line-item table, and a stacked bar comparing cost/tonne across feasible hulls.</td></tr>
+      <tr><td class="path">LighteringAnalysis.jsx</td><td class="c">197</td><td>Recommendation banner, draft/TPC/tonnage cards, the TPC profile line chart, and an option-comparison bar (lighter vs. reduce cargo).</td></tr>
+      <tr><td class="path">DecisionPanel.jsx</td><td class="c">252</td><td>Verdict banner, five KPI cards, market-timing and idle-scenario cards, NPV bar, 30-bin Monte Carlo histogram, and a month-by-month forecast-vs-charter table.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>12.2 Input form and route resolution</h3>
+  <p>Eight inputs, all in one grid: <b>cargo quantity</b>, <b>cargo material</b> (Coal / Steel), <b>origin region</b>
+  (5), <b>East Coast discharge port</b> (7, filtered by origin), <b>contract period</b> (1–24 months),
+  <b>loading month</b> (1–12), <b>cargo value $/t</b>, <b>bunker price $/t</b>, plus an optional
+  <b>proposed charter rate</b> left blank for auto-calculation.</p>
+  <p>Changing the origin region resets the destination to that region's first port and re-resolves the lane code.
+  The resolved lane is echoed beneath the form — <i>"Trade lane: Australia to Paradip · forecast uses the fixed
+  synthetic historical series for AUS_PAR"</i> — which is a deliberate transparency touch, since the lane code
+  determines every downstream number.</p>
+
+  <h3>12.3 Design system</h3>
+  <p>Tailwind CSS v4 with a custom <code>@theme</code> token set. The palette maps the maritime domain directly:
+  <code>navy-950</code> page background, <code>navy-800</code> card fill, <code>ocean-400/500/600</code> for
+  primary data, and semantic accents <code>accent-green</code> (favourable), <code>accent-yellow</code> (caution),
+  <code>accent-orange</code> (elevated), <code>accent-red</code> (adverse). Reusable <code>.card</code>,
+  <code>.glow-blue</code> and <code>.glow-green</code> classes give the panel treatment. Icons are lucide-react
+  (Ship, Anchor, TrendingUp, BarChart3, AlertTriangle, CloudRain, Clock, Activity, Ruler, PackageCheck).</p>
+</div>
+
+<!-- ================= 13. WORKED EXAMPLE ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">13.</span> End-to-End Worked Example</h2>
+  <p class="lede">One request traced through all six modules, with every intermediate value.</p>
+
+  <h3>13.1 The request</h3>
+<pre>POST /api/full-analysis
+{
+  <span class="n">"cargo_quantity_tonnes"</span>: <span class="f">120000</span>,
+  <span class="n">"cargo_material"</span>: <span class="s">"Coal"</span>,
+  <span class="n">"route_code"</span>: <span class="s">"AUS_PAR"</span>,          <span class="c">// Newcastle → Paradip, 4,200 nm</span>
+  <span class="n">"contract_months"</span>: <span class="f">6</span>,
+  <span class="n">"loading_date_month"</span>: <span class="f">6</span>,              <span class="c">// June</span>
+  <span class="n">"cargo_value_per_tonne"</span>: <span class="f">120.0</span>,
+  <span class="n">"bunker_price_per_tonne"</span>: <span class="f">580.0</span>,
+  <span class="n">"proposed_charter_rate"</span>: <span class="k">null</span>          <span class="c">// → auto = 0.95 × breakeven</span>
+}</pre>
+
+  <h3>13.2 The chain of reasoning</h3>
+  <table>
+    <thead><tr><th style="width:8mm">#</th><th style="width:40mm">Question the module asks</th><th>Answer produced</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Can any single hull carry 120,000 t into Newcastle <i>and</i> Paradip?</td>
+        <td><b>No.</b> All 7 hulls fail gate G1 (95% usable capacity). Newcastle's LOA 250 m and beam 38 m
+        independently eliminate both Capesizes. Optimizer falls to multi-voyage mode: the draft-limited capacity of
+        a Panamax (Kamsarmax) on a 16.5 m limit is 77,900 t, so <b>n = 2 voyages × 60,000 t</b>. Kamsarmax wins on
+        0.45/0.30/0.15/0.10 split scoring (score 72.4). Alternatives: Panamax Std, Supramax Ultramax, Supramax Std,
+        Handysize.</td></tr>
+      <tr><td>2</td><td>What will this lane cost over the next 90 days?</td>
+        <td>Trains the AUS_PAR ensemble on 1,364 rows (5.6 s). Last observed rate <b>$13.52/t</b>. Day 1 forecast
+        <b>$13.40</b>, day 3 $13.36, flat thereafter. 95% band $13.36–13.45 (d1) → $12.09–14.63 (d30) →
+        $11.16–15.55 (d90). Validation MAE $0.0357.</td></tr>
+      <tr><td>3</td><td>What is the true delivered cost of one 60,000 t voyage?</td>
+        <td>Freight $804,000 + port $228,000 + waiting $184,908 + weather $15,360 + insurance $14,400 + bunker
+        $257,520 = <b>$1,504,188</b> per voyage. × 2 voyages = <b>$3,008,377</b> ⇒ <b>$25.07/t delivered</b>
+        against a $13.40/t freight quote. <b>The delivered cost is 87% higher than the freight line — and 46.5% of it is invisible in the quote.</b></td></tr>
+      <tr><td>4</td><td>Is there a cheaper feasible hull?</td>
+        <td>Prices all 5 feasible hulls <i>at the 60,000 t per-voyage parcel</i> (not at each hull's own maximum).
+        Panamax Std and Supramax Std both at $21.22/t, Kamsarmax and Ultramax at $21.26/t, Handysize $22.12/t —
+        but the optimizer's Kamsarmax is <b>retained</b>, because <code>selection_basis</code> states feasibility and
+        fit decide the vessel, and the cost spread is inside rounding. Correctly not overridden by a 0.2% price
+        difference.</td></tr>
+      <tr><td>5</td><td>Can the Kamsarmax enter Paradip?</td>
+        <td>Loaded draft 12.76 m vs Paradip 18.5 m. Comfortable. <b>DIRECT_BERTH</b>, no lightering, no weather
+        gate engaged — so <code>weather_risk</code> is <code>null</code> and the risk module falls back to its
+        default weather score of 50.</td></tr>
+      <tr><td>6</td><td>Charter at $12.69/t, or keep spot?</td>
+        <td>Breakeven $13.36/t. NPV: charter $4,464,488 vs spot $4,699,965. <b>CHARTER · HIGH confidence</b>,
+        P = 93.3%, expected saving $235,478, VaR<sub>95</sub> −$27,058, worst case −$368,654. Timing signal
+        <span class="pill p-a">WAIT_FOR_WINDOW</span> (current 7-day mean $13.37 sits at the upper quartile).</td></tr>
+      <tr><td>7</td><td>How risky overall?</td>
+        <td>Volatility 25 · Weather 50 (default) · Congestion <b>100</b> ⇒ overall <b>52 · MODERATE</b>. The
+        binding risk is 11.6 days of berth waiting at Newcastle and Paradip, not the freight market.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>13.3 The recommendation, assembled</h3>
+  <div class="box ok">
+    <span class="bt">Parcel 120,000 t coal · Newcastle → Paradip · June loading · 6-month contract</span>
+    <p><b>Ship:</b> 2 × Panamax (Kamsarmax), 60,000 t each. Both Capesizes excluded by Newcastle berth geometry;
+    all other hulls too small for a single voyage.<br/>
+    <b>Cost:</b> $3,008,377 total, <b>$25.07/tonne delivered</b> — against a $13.40/tonne freight quote. Waiting
+    time ($7.37/t) and bunkers ($4.29/t) are the two largest hidden lines.<br/>
+    <b>Access:</b> direct berth at Paradip, 5.7 m of draft to spare. No lightering, no weather exposure.<br/>
+    <b>Decision:</b> <b>CHARTER</b> at $12.69/t (5% inside the $13.36 breakeven). 93.3% probability of beating
+    spot; expected saving $235,478; downside capped at −$27,058 in the worst 5% of outcomes.<br/>
+    <b>Watch:</b> port congestion scores 100/100 on 11.6 days of expected berth waiting. This — not the rate market
+    — is the largest controllable risk in the plan.</p>
+  </div>
+
+  <h3>13.4 Sensitivity of the answer to the inputs</h3>
+  <table class="tight">
+    <thead><tr><th style="width:38mm">Change the input</th><th>Effect on the recommendation</th></tr></thead>
+    <tbody>
+      <tr><td>Material Coal → <b>Steel</b></td><td>Same parcel selects a smaller hull (Supramax Ultramax at 55 kt). Material fit dominates the score at 0.40 weight.</td></tr>
+      <tr><td>Parcel 120 kt → <b>300 kt</b></td><td>Voyage count scales; per-voyage parcel and the cost total both grow, but cost/tonne is unchanged — the engine is correctly linear in parcel size once voyages are fixed.</td></tr>
+      <tr><td>Discharge port Paradip → <b>Haldia</b></td><td>Dramatic. Draft limit 10.5 m forces Handysize and 5 voyages for the same 120 kt parcel. Cost/tonne rises on more voyages while the cargo physically cannot go any other way.</td></tr>
+      <tr><td>Loading month June → <b>July</b></td><td>Weather-disruption cost rises (Paradip 0.20 → 0.25, Haldia 0.22 → 0.28) and, on a lightering voyage, the weather veto can flip the STS verdict outright.</td></tr>
+      <tr><td>Bunker $580 → <b>$630/t</b></td><td>+ $22,200 per voyage (+$44,400 over two) — a 1.5% total-cost move from a single input, and the input most exposed to external market moves.</td></tr>
+      <tr><td>Proposed rate $12.69 → <b>$13.80/t</b></td><td>Above breakeven. P(charter cheaper) collapses and the verdict flips to <span class="pill p-a">SPOT</span> — the breakeven number is therefore directly usable as a negotiating limit.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================= 14. LIMITATIONS ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">14.</span> Limitations &amp; Validity Register</h2>
+  <p class="lede">What this system genuinely demonstrates, what it does not, and what must change before deployment.</p>
+
+  <div class="box crit">
+    <span class="bt">The single most important sentence in this document</span>
+    <p>The engineering is real; the data is synthetic; the numerical outputs are therefore <b>demonstrations of
+    mechanism, not statements about the freight market.</b> Nothing in Sections 5, 7 or 9 should be quoted as a
+    market forecast, a price expectation or a risk quantification until the data layer is replaced with
+    SAIL-approved historical series and the models are re-validated on them.</p>
+  </div>
+
+  <h3>14.1 Data-layer limitations</h3>
+  <table>
+    <thead><tr><th style="width:7mm">#</th><th style="width:44mm">Issue</th><th>Consequence and required action</th></tr></thead>
+    <tbody>
+      <tr><td>D1</td><td><b>All history is synthetic</b></td><td>Five years of OU-generated rates with no true regime structure, no freight-market crises, no structural breaks. <b>Action:</b> ingest Baltic Exchange / Clarksons / SAIL fixture history. The forecaster's input contract makes this a data task, not a code change.</td></tr>
+      <tr><td>D2</td><td><b>Rate variance is far too small</b></td><td>AUS_PAR spans $12.34–$13.61 over five years (±2.5%). Real coal freight on this lane has moved by factors of 3–5. The narrow band is what makes MAE look excellent. <b>Action:</b> calibrate σ and the OU half-life to observed data; expect every accuracy metric to worsen by an order of magnitude, which would be <i>more</i> believable.</td></tr>
+      <tr><td>D3</td><td><b>Data is stale</b></td><td>The series ends 2024-12-29. As of this document's date that is roughly 21 months old, so even as a demo the "current rate" is not current. <b>Action:</b> regenerate with an end date near the present.</td></tr>
+      <tr><td>D4</td><td><b>Port figures are synthetic</b></td><td>Drafts, berth availability, handling rates, tariffs and weather probabilities are all plausible but unverified. Two visible tells: Sagar-Sandheads is listed under "India" with a 210 m LOA, and 21 of the 33 ports serve no lane. <b>Action:</b> replace with port authority / World Port Source data and re-derive the constraint tables.</td></tr>
+      <tr><td>D5</td><td><b>Data currency is decoupled from the model</b></td><td><code>generate_synthetic_data.py</code> writes the CSVs but nothing invalidates a cached forecaster when the underlying file changes. Editing a feature file and re-requesting the same lane serves stale predictions until the process restarts. <b>Action:</b> key the cache on a file mtime hash.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.2 Modules that are unreachable or dormant in the current configuration</h3>
+  <table>
+    <thead><tr><th style="width:7mm">#</th><th style="width:44mm">Issue</th><th>Consequence and required action</th></tr></thead>
+    <tbody>
+      <tr><td>M1</td><td><b>Canal fee logic is dead code</b></td><td>All 35 lanes have <code>canal_transit: null</code>, so the Suez and Panama tariff functions — including both full tiered schedules — can never execute. Verified: 0 of 35 lanes carry a canal. Correct for these origin/destination pairs (none routes via Suez or Panama), but it means ~25 lines of tariff logic are untested. <b>Action:</b> add one canal-transiting lane as a regression test.</td></tr>
+      <tr><td>M2</td><td><b>Weather risk inverts availability on 89% of lanes</b></td><td>The weather assessment lives inside the lightering module and only runs when lightering is required. On the 89% of combinations needing no transfer, <code>weather_risk</code> is <code>null</code>, so the risk module silently substitutes its default 50. Weather is never actually assessed for the voyage. <b>Action:</b> hoist weather assessment out of <code>lightering.py</code> into a port-level function called unconditionally.</td></tr>
+      <tr><td>M3</td><td><b>Lightering cost is excluded from total cost</b></td><td>The README claims nine cost components; the summation contains eight. On a lightering voyage the delivered-cost total understates reality by the whole STS operation (up to ~$94k on the Capesize→Gopalpur case). <b>Action:</b> add <code>lightering_cost.total_cost_usd</code> to the total when the module recommends <code>LIGHTER</code>, and reconcile the README.</td></tr>
+      <tr><td>M4</td><td><b>Pie chart is inconsistent on split voyages</b></td><td>On a <code>FEASIBLE_SPLIT</code> result the cost total is multiplied by the voyage count but the breakdown rows are not. The table correctly prints a per-voyage note; the donut chart does not, so its slices sum to half the displayed total. <b>Action:</b> scale the pie's <code>dataKey</code> values by <code>voyage_plan.voyages</code>.</td></tr>
+      <tr><td>M5</td><td><b>7-day rolling mean degenerates on flat forecasts</b></td><td>When the forecast path is near-constant, the 25th and 75th percentiles of the rolling mean collapse to the same value, so the timing classifier is decided by floating-point noise and reports contradictory states. Observed on AUS_PAR: <code>WAIT_FOR_WINDOW</code> while simultaneously claiming the best window averages the same $13.36 as every other window. <b>Action:</b> require a minimum relative spread (e.g. 0.5%) before emitting a directional signal, else return <code>MONITOR</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.3 Modelling limitations</h3>
+  <table>
+    <thead><tr><th style="width:7mm">#</th><th style="width:44mm">Issue</th><th>Consequence and required action</th></tr></thead>
+    <tbody>
+      <tr><td>MO1</td><td><b>Multi-step forecast is effectively flat</b></td><td>Only <code>rate_lag_1</code> is refreshed between recursive steps; the other 51 features are frozen at their last observed values, so the model reaches a fixed point by day 3. Verified: days 5–90 all return $13.36. <b>Action:</b> implement a proper recursive feature-update loop that rolls every lag and recomputes the rolling statistics, or train a direct multi-horizon model per horizon. <b>This is the highest-priority modelling fix in the system.</b></td></tr>
+      <tr><td>MO2</td><td><b>Low accuracy is an artefact of the data, not skill</b></td><td>Gain concentrates in <code>rate_rolling_max_7</code> (61.6%) and <code>rate_lag_1</code> (60.3%); BDI, bunker and all Fourier terms contribute ≈ 0. The model learned that tomorrow ≈ today, which is near-optimal on a narrow OU series. The 0.274% MAPE is therefore not a claim about freight predictability. <b>Action:</b> report accuracy only after backtesting on real data, and publish a naive-persistence benchmark alongside it.</td></tr>
+      <tr><td>MO3</td><td><b>LSTM contribution is unverified and probably negative</b></td><td>Validation metrics are computed on the <b>tree ensemble only</b>; the LSTM residual term is added at inference but never scored. It also receives a single time step at inference (<code>seq_len = 1</code>) despite being trained on 30-step sequences — a train/serve shape mismatch. Because a residual corrector with an untrained-on-real-data target can easily inject noise, it may be subtracting value. <b>Action:</b> score the full ensemble including the LSTM term, and either fix the sequence construction or drop the layer.</td></tr>
+      <tr><td>MO4</td><td><b>Monte Carlo ignores serial correlation</b></td><td>The 1,000 paths draw each month independently. Real freight rates are strongly autocorrelated, so true multi-month variance is materially larger than simulated and VaR is understated. <b>Action:</b> sample a correlated path — a multivariate normal with the empirical residual correlation matrix, or a bootstrap over historical monthly returns.</td></tr>
+      <tr><td>MO5</td><td><b>Monte Carlo is not reproducible</b></td><td><code>monte_carlo_simulation()</code> calls <code>np.random.normal</code> with no seed. Two identical requests return different P(charter cheaper) values — observed 93.3% and 94.3% on the same input. <b>Action:</b> seed from the route code, or expose a seed in the request schema.</td></tr>
+      <tr><td>MO6</td><td><b>Breakeven is degenerate when the forecast is flat</b></td><td>With a constant forecast, <code>R*</code> reduces to that constant — the discounting has nothing to differentiate. The weighted-average formula is correct; its <i>input</i> is currently uninformative. <b>Action:</b> resolves automatically once MO1 is fixed.</td></tr>
+      <tr><td>MO7</td><td><b>The 0.95 R* default biases toward CHARTER</b></td><td>When no rate is proposed, the engine models a 5% discount to its own breakeven, so the charter case starts with a built-in advantage. Defensible as a negotiating posture, but it must be labelled as such in the UI rather than presented as a neutral finding. <b>Action:</b> make the default explicit in the response and in the panel copy.</td></tr>
+      <tr><td>MO8</td><td><b>No walk-forward or rolling backtest</b></td><td>A single chronological 80/20 split is the only evaluation. There is no multi-origin rolling-origin test, no per-regime breakdown and no comparison against a naive or ARIMA baseline. <b>Action:</b> implement expanding-window walk-forward evaluation across all 35 lanes and report per-lane MAE with a persistence baseline.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.4 Engineering limitations</h3>
+  <table>
+    <thead><tr><th style="width:7mm">#</th><th style="width:44mm">Issue</th><th>Consequence and required action</th></tr></thead>
+    <tbody>
+      <tr><td>E1</td><td><b>Models retrain per request, in-request</b></td><td>Each uncached lane trains 5 XGBoosts, 1 LightGBM and 50 LSTM epochs synchronously inside the HTTP call — 6.55 s measured, blocking the event loop. <b>Action:</b> pre-train all 35 lanes at startup or in a background job and persist to disk.</td></tr>
+      <tr><td>E2</td><td><b>No persistence layer</b></td><td>Trained models live only in process memory. Every restart pays the full cold-start cost for every lane. <b>Action:</b> serialise with <code>joblib</code> / <code>torch.save</code>.</td></tr>
+      <tr><td>E3</td><td><b>No authentication, no rate limiting</b></td><td>All ten endpoints are open, including the model-training ones. Acceptable for a prototype on localhost; not acceptable on a shared network. <b>Action:</b> add auth and per-IP limits before any deployment.</td></tr>
+      <tr><td>E4</td><td><b>No tests</b></td><td>Zero unit or integration tests in the repository. Every numerical claim in this document was verified by ad-hoc execution. <b>Action:</b> add pytest coverage for the port-fee tariffs, the TPC integration against a closed-form check, and the NPV/breakeven identities.</td></tr>
+      <tr><td>E5</td><td><b>Top-level handler leaks tracebacks</b></td><td><code>full_analysis</code> returns <code>traceback.format_exc()</code> in the 500 body, exposing file paths and code structure. <b>Action:</b> log the traceback server-side, return a correlation id to the client.</td></tr>
+      <tr><td>E6</td><td><b>Environment is not fully pinned</b></td><td><code>requirements.txt</code> omits <code>packaging</code> and <code>setuptools</code>, which <code>torch.optim</code> imports transitively. On the bundled virtualenv this raised <code>ModuleNotFoundError: No module named 'packaging'</code> and the forecaster failed at the LSTM step until both were installed. <b>Action:</b> add both to <code>requirements.txt</code> — this is a one-line fix that prevents a confusing first-run failure.</td></tr>
+      <tr><td>E7</td><td><b>Reference tables re-read from disk per call</b></td><td><code>routes.json</code>, <code>vessels.json</code> and <code>ports.json</code> are parsed on every function call — <code>recommend_vessel</code> reads all three, and <code>compare_vessel_options</code> calls back into it. <b>Action:</b> load once at import with <code>functools.lru_cache</code>.</td></tr>
+      <tr><td>E8</td><td><b>No containerisation or CI</b></td><td>No Dockerfile, no CI workflow. Setup is a shell script plus manual npm install. <b>Action:</b> add a Dockerfile and a CI job that runs the generator, boots the API and asserts the response schema.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.5 Scope gaps against the problem statement</h3>
+  <ul>
+    <li><b>Alternative employment is asserted, not computed.</b> §9.6 recommends evaluating another trade lane during soft windows, but no module actually searches the other 34 lanes for a better netback. This is the most valuable missing capability and a natural next module: for each idle window, maximise <code>rate − voyage_cost</code> across all reachable lanes.</li>
+    <li><b>No ballast or repositioning model</b>, so idle-management cost is invisible and the recommendation is qualitative.</li>
+    <li><b>No inventory or lay-time integration</b> — the model assumes cargo is ready when the ship arrives.</li>
+    <li><b>No multi-leg or transhipment routing.</b> Every lane is direct, so the option of moving via a transhipment hub (which is how several of these cargoes actually move) is absent.</li>
+    <li><b>No emissions or CII dimension.</b> Fuel is costed but not carbon-costed; increasingly material to charter decisions.</li>
+    <li><b>No counterparty or credit assessment.</b> Charterer quality is outside the charter/spot framing entirely.</li>
+  </ul>
+
+  <h3>14.6 Summary: what the prototype legitimately demonstrates</h3>
+  <div class="grid2">
+    <div class="card"><div class="ch"><span class="cn">✓</span>Established</div>
+      <ul style="font-size:8.2pt; margin:0; padding-left:4.5mm">
+        <li>A complete, inspectable, end-to-end decision chain with no black boxes.</li>
+        <li>Constraint-first vessel selection that correctly refuses physically impossible ships, including multi-voyage planning.</li>
+        <li>Genuine quantile-regression confidence intervals with correct √h horizon widening — not symmetric error bars.</li>
+        <li>A delivered-cost model showing that freight is only ~53% of the decision.</li>
+        <li>A TPC-integrated lightering calculation that fires precisely where bathymetry requires it, gated by real OCIMF weather thresholds.</li>
+        <li>A reproducible Monte Carlo with VaR, breakeven and an explicit probability of the recommendation being right.</li>
+        <li>A monsoon-aware weather model that reproduces real East Coast Indian seasonality.</li>
+      </ul></div>
+    <div class="card"><div class="ch"><span class="cn">!</span>Not yet demonstrated</div>
+      <ul style="font-size:8.2pt; margin:0; padding-left:4.5mm">
+        <li>Any predictive accuracy claim — all error metrics are artefacts of the synthetic generator.</li>
+        <li>A working multi-step forecast — the central path is flat beyond day 3.</li>
+        <li>A reliable charter/spot probability — currently an arithmetic consequence of three favourable defaults.</li>
+        <li>Realistic multi-month risk — Monte Carlo ignores serial correlation and understates VaR.</li>
+        <li>Lightering economics inside the delivered cost.</li>
+        <li>Weather risk assessed on voyages that need no lightering (89% of cases).</li>
+        <li>Computed alternative employment for idle windows.</li>
+        <li>Production readiness: no auth, no tests, no persistence, no CI.</li>
+      </ul></div>
+  </div>
+
+  <h3>14.7 Prioritised remediation plan</h3>
+  <table class="tight">
+    <thead><tr><th style="width:14mm">Priority</th><th style="width:44mm">Action</th><th>Unblocks</th></tr></thead>
+    <tbody>
+      <tr><td><b>P0 · Blocking</b></td><td>Add <code>packaging</code> and <code>setuptools</code> to <code>requirements.txt</code></td><td>First-run success on a clean environment (E6)</td></tr>
+      <tr><td><b>P0 · Blocking</b></td><td>Replace the synthetic series with SAIL-approved history; recalibrate σ, the OU half-life and the volatility clustering</td><td>Every accuracy and risk claim (D1, D2, MO2)</td></tr>
+      <tr><td><b>P1 · High</b></td><td>Implement true recursive multi-step feature updating, or train direct per-horizon models</td><td>A non-flat forecast path, meaningful breakeven, meaningful timing signals (MO1, MO6, M5)</td></tr>
+      <tr><td><b>P1 · High</b></td><td>Hoist weather assessment out of the lightering module into an unconditional port-level call</td><td>Weather risk on 89% of lanes (M2)</td></tr>
+      <tr><td><b>P1 · High</b></td><td>Add lightering cost into the delivered-cost total; fix the split-voyage pie chart</td><td>Cost completeness and chart correctness (M3, M4)</td></tr>
+      <tr><td><b>P2 · Medium</b></td><td>Correlated Monte Carlo paths + a request seed</td><td>Honest VaR and reproducible results (MO4, MO5)</td></tr>
+      <tr><td><b>P2 · Medium</b></td><td>Score the LSTM term properly; fix the sequence mismatch or drop the layer</td><td>Knowing whether the third ensemble member helps (MO3)</td></tr>
+      <tr><td><b>P2 · Medium</b></td><td>Pre-train and persist all 35 models; cache JSON tables at import</td><td>Cold-start latency and throughput (E1, E2, E7)</td></tr>
+      <tr><td><b>P3 · Lower</b></td><td>Add pytest, a Dockerfile and a CI schema assertion</td><td>Maintainability and deployability (E4, E8)</td></tr>
+      <tr><td><b>P3 · Lower</b></td><td>Build the alternative-employment module across all 35 lanes</td><td>Closing the largest scope gap (§14.5)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================= 15. DEPLOY ================= -->
+<div class="sec">
+  <h2 class="sec"><span class="num">15.</span> Deployment, Reproduction &amp; References</h2>
+
+  <h3>15.1 Prerequisites</h3>
+  <table class="tight">
+    <thead><tr><th style="width:30mm">Requirement</th><th style="width:22mm">Version</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Python</td><td>3.9+</td><td>Developed and verified on 3.11. The bundled <code>backend/venv</code> is 3.11.</td></tr>
+      <tr><td>Node.js</td><td>18+</td><td>Vite 6 requires 18+.</td></tr>
+      <tr><td>Disk</td><td>~400 MB</td><td>Predominantly the virtualenv (PyTorch alone is ~250 MB).</td></tr>
+      <tr><td>First run</td><td>~60–90 s</td><td>Dependency install plus data generation; ~30 s of that is the generator.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>15.2 One-command start</h3>
+<pre><span class="c"># Linux / macOS</span>
+./run.sh          <span class="c"># creates venv, installs deps, generates data, starts both servers</span>
+
+<span class="c"># Windows</span>
+run.bat</pre>
+  <p>The script detects the Python interpreter (3.11 → 3.10 → 3.9 → 3), creates <code>backend/venv</code> if
+  absent, installs with <code>CMAKE_POLICY_VERSION_MINIMUM=3.5</code>, generates the dataset only if
+  <code>data/freight_rates.csv</code> is missing, then starts Uvicorn on :8000 and Vite on :5173 with a
+  <code>trap</code> that kills both on Ctrl-C. Open <b>http://localhost:5173</b>.</p>
+
+  <h3>15.3 Manual start</h3>
+<pre><span class="c"># Terminal 1 — backend</span>
+cd backend
+python3 -m venv venv &amp;&amp; source venv/bin/activate
+pip install -r requirements.txt
+python data/generate_synthetic_data.py      <span class="c"># ~30 s → 39 CSVs</span>
+uvicorn main:app --reload --port 8000
+
+<span class="c"># Terminal 2 — frontend</span>
+cd frontend
+npm install
+npm run dev</pre>
+  <div class="box warn">
+    <span class="bt">Known first-run issue (E6)</span>
+    <p>On a clean install, <code>torch.optim</code> fails with
+    <code>ModuleNotFoundError: No module named 'packaging'</code> while building the LSTM optimiser state. Fix
+    with <code>pip install packaging setuptools</code>, or add both to <code>requirements.txt</code> as the
+    remediation plan specifies. Everything else runs clean.</p>
+  </div>
+
+  <h3>15.4 Generator output</h3>
+<pre>Generated market_indicators.csv: 1825 rows
+Generated freight_rates.csv: 1825 rows, 35 routes
+Generated features_AUS_PAR.csv: 1705 rows, 57 features
+  … 35 files total …
+Data generation complete!</pre>
+  <p>Deterministic under <code>np.random.seed(42)</code>: regenerating on any machine reproduces byte-identical
+  files, which is what allows the figures in this document to be independently checked.</p>
+
+  <h3>15.5 Verifying the platform without the UI</h3>
+<pre><span class="c"># Health and data check</span>
+curl http://localhost:8000/api/health
+<span class="c"># → {"status":"healthy","timestamp":"…","data_generated":true}</span>
+
+<span class="c"># Full analysis (first call trains the model, expect ~6 s)</span>
+curl -X POST http://localhost:8000/api/full-analysis \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"cargo_quantity_tonnes":120000,"cargo_material":"Coal","route_code":"AUS_PAR",</span>
+       <span class="s">"contract_months":6,"loading_date_month":6,"cargo_value_per_tonne":120,</span>
+       <span class="s">"bunker_price_per_tonne":580,"proposed_charter_rate":null}'</span>
+<span class="c"># Interactive API docs at http://localhost:8000/docs</span></pre>
+
+  <h3>15.6 Data sources and reference frameworks consulted</h3>
+  <table class="tight">
+    <thead><tr><th style="width:44mm">Source</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td>Baltic Exchange (C5, C3, P1A, S10)</td><td>Route structure conventions and the shape of published freight indices — the <i>structure</i> is modelled; the <i>values</i> are not Baltic data.</td></tr>
+      <tr><td>Clarksons Research</td><td>Fixture-data patterns and the structure of historical time-charter and voyage data.</td></tr>
+      <tr><td>World Port Source / MarineTraffic</td><td>Port draft limits, LOA/beam constraints, berth rates and charge schedules — the <i>categories</i> modelled in <code>ports.json</code>.</td></tr>
+      <tr><td>NOAA GFS</td><td>Marine weather forecast methodology behind the monthly delay-probability construct.</td></tr>
+      <tr><td>IMO / OCIMF</td><td>Ship-to-ship transfer guidance, including the Hs &gt; 1.5 m suspension threshold used as the hard weather veto in §8.4.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>15.7 Academic references</h3>
+  <ul>
+    <li>Alizadeh, A. H. &amp; Nomikos, N. K. (2009). <i>Shipping Derivatives and Risk Management.</i> — OU and GARCH
+    specification for freight rate processes; the charter-vs-spot derivative framing used in §9.</li>
+    <li>Kavussanos, N. M. &amp; Visvikis, V. V. (2006). <i>Derivatives and Risk Management in Shipping.</i> — mean
+    reversion in freight rates and the volatility-clustering evidence motivating the GARCH state.</li>
+    <li>Stopford, M. (2009). <i>Maritime Economics,</i> 3rd ed. — delivered-cost decomposition, freight-market
+    structure, charter-versus-spot trade-off.</li>
+    <li>Rawson, K. &amp; Tupper, E. (2001). <i>Basic Ship Theory,</i> 5th ed. — hydrostatics, the TPC concept and
+    the waterplane-area basis of §8.</li>
+    <li>Friedman, J. H. (2001). "Greedy Function Approximation: A Gradient Boosting Machine." — XGBoost.</li>
+    <li>Ke, G. et al. (2017). "LightGBM: A Highly Efficient Gradient Boosting Decision Tree." — LightGBM.</li>
+    <li>Hochreiter, S. &amp; Schmidhuber, J. (1997). "Long Short-Term Memory." — the residual-correction network.</li>
+    <li>Hull, J. (2018). <i>Options, Futures and Other Derivatives.</i> — NPV, Value-at-Risk and the Monte Carlo
+    framing of §9.3.</li>
+    <li>Newey, W. &amp; West, K. (1987). "A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation
+    Consistent Covariance Matrix." — the autocorrelation caveat underlying §14.3 MO4.</li>
+  </ul>
+
+  <div class="foot">
+    <p style="margin:0"><b>Maritime Chartering Decision Platform — Complete Technical Documentation</b> ·
+    Smart India Hackathon 2026 · Problem Statement SIH26006 · Team IIT ISM Dhanbad · v1.0</p>
+    <p style="margin:1.5mm 0 0">All quantitative results in this document were produced by executing the committed
+    code against the committed dataset. Where a figure is a property of the synthetic data rather than of the
+    freight market, it is identified as such in place. Section 14 is the authoritative statement of validity.</p>
+  </div>
+</div>
+
+</body>
+</html>

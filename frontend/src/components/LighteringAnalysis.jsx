@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line,
+  ResponsiveContainer, Line,
 } from 'recharts';
 import { Anchor, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 

@@ -5,7 +5,15 @@ echo "🚢 Maritime Chartering Decision Platform"
 echo "========================================"
 
 # Check Python
-if ! command -v python3 &> /dev/null; then
+PYTHON_BIN="python3"
+for candidate in python3.11 python3.10 python3.9 python3; do
+    if command -v "$candidate" &> /dev/null; then
+        PYTHON_BIN="$candidate"
+        break
+    fi
+done
+
+if ! command -v "$PYTHON_BIN" &> /dev/null; then
     echo "❌ Python 3 is required. Install from https://python.org"
     exit 1
 fi
@@ -22,12 +30,12 @@ echo "🔧 Setting up backend..."
 cd backend
 
 if [ ! -d "venv" ]; then
-    echo "Creating virtual environment..."
-    python3 -m venv venv
+    echo "Creating virtual environment with $PYTHON_BIN..."
+    "$PYTHON_BIN" -m venv venv
 fi
 
 source venv/bin/activate
-pip install -r requirements.txt --quiet
+CMAKE_POLICY_VERSION_MINIMUM=3.5 pip install -r requirements.txt --quiet
 
 # Generate data if not exists
 if [ ! -f "data/freight_rates.csv" ]; then

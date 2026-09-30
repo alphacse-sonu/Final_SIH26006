@@ -205,8 +205,6 @@ def generate_all_data():
     
     data_dir = os.path.dirname(os.path.abspath(__file__))
     market_df.to_csv(os.path.join(data_dir, "market_indicators.csv"), index=False)
-    print(f"Generated market_indicators.csv: {len(market_df)} rows")
-    
     # Generate rates for each route
     all_rates = {"date": dates}
     
@@ -216,15 +214,11 @@ def generate_all_data():
     
     rates_df = pd.DataFrame(all_rates)
     rates_df.to_csv(os.path.join(data_dir, "freight_rates.csv"), index=False)
-    print(f"Generated freight_rates.csv: {len(rates_df)} rows, {len(ROUTE_CONFIGS)} routes")
-    
     # Generate combined feature-engineered dataset for ML training
     for route_code in ROUTE_CONFIGS:
         features_df = build_features(rates_df, market_df, route_code)
         features_df.to_csv(os.path.join(data_dir, f"features_{route_code}.csv"), index=False)
         print(f"Generated features_{route_code}.csv: {len(features_df)} rows, {len(features_df.columns)} features")
-    
-    print("\nData generation complete!")
 
 
 def build_features(rates_df: pd.DataFrame, market_df: pd.DataFrame, route_code: str) -> pd.DataFrame:
